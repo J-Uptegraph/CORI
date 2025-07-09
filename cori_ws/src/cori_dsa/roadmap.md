@@ -1,6 +1,7 @@
-# Technical Roadmap - Python & CORI Integration
+# 12-Day Robotics Systems Mastery
 
-Achieve a comprehensive understanding and mastery of data structures and algorithms, enabling clear articulation, robust implementation, and practical application in a robotics context, specifically for a humanoid robot like CORI. Each CORI feature challenge is designed to be implemented from scratch in 45 minutes, utilizing the day's core data structure or algorithm while iteratively building on the project's foundation to create innovative and impactful features.
+**Target Date:** July 21st, 6:00 AM  
+**Strategy:** Two-phase approach - AI-assisted learning, then solo performance
 
 ## Schedule
 - **5:00–5:30 AM**: Wake up and prepare for the day
@@ -14,24 +15,28 @@ Achieve a comprehensive understanding and mastery of data structures and algorit
 - **8:00–9:00 PM**: Physical training
 - **9:00–10:00 PM**: Shower, relax, dinner, and rest
 
-## Topics Covered
-| Topic | Explanation | Robotics Application (CORI) |
-|-------|-------------|----------------------------|
-| **Arrays/Lists** | Dynamic and fixed-size arrays for efficient data storage and manipulation. Supports O(1) access and O(n) insertion/deletion. | Optimize CORI’s movement history by storing head positions, removing duplicates, and managing memory with a circular buffer. |
-| **Strings** | Techniques for manipulation, searching, and pattern matching (e.g., regex). Handles immutable strings and operations like split/join. | Parse natural language commands for laundry sorting, extracting actions and attributes like color or clothing type. |
-| **Linked Lists** | Singly, doubly, or circular lists for flexible data organization. Enables O(1) insertion at known positions but O(n) access. | Manage CORI’s task queue with priority-based insertion and deletion for efficient task scheduling. |
-| **Stacks & Queues** | LIFO (stack) and FIFO (queue) structures for ordered processing. Used in function calls, BFS/DFS, and undo operations. | Implement state management for CORI, supporting undo operations and task scheduling with deque-based queues. |
-| **Hash Maps/Tables** | Key-value storage (Python dictionaries) with O(1) average-case operations. Handles collisions via chaining or probing. | Create an adaptive learning database for CORI to track user preferences and confidence scores with fast lookups. |
-| **Trees** | Binary Trees and BSTs with traversals (in-order, pre-order, post-order, BFS, DFS). Used for hierarchical data and decision-making. | Build a decision tree for CORI to classify clothing based on attributes like color and fabric, supporting user corrections. |
-| **Graphs** | Adjacency lists/matrices and traversals (BFS, DFS) for interconnected systems. Supports pathfinding and network analysis. | Enable CORI to navigate a household graph, optimizing paths for laundry collection while avoiding obstacles. |
-| **Heaps (Priority Queues)** | Min/max-heaps for efficient priority management. O(log n) insert/delete, O(1) peek. Used in scheduling and shortest-path algorithms. | Dynamically prioritize CORI’s tasks based on urgency, energy levels, and user preferences using a heap-based scheduler. |
-| **Sorting** | Algorithms like Quick Sort (O(n log n)), Merge Sort (stable), and Insertion Sort (adaptive). Vary in time/space complexity. | Sort laundry items by multiple criteria (color, fabric, priority) to optimize washing efficiency. |
-| **Searching** | Binary Search for O(log n) retrieval in sorted data. Variants include finding first/last occurrence or insertion points. | Locate objects in CORI’s sorted spatial database by position, confidence, or time, optimizing search efficiency. |
-| **Recursion & Backtracking** | Recursive solutions break problems into subproblems; backtracking explores all possibilities systematically. | Plan CORI’s paths through a house with obstacle avoidance, using recursive backtracking for optimal laundry collection routes. |
-| **Dynamic Programming** | Solves complex problems by caching solutions to overlapping subproblems. Uses memoization or tabulation for optimization. | Optimize CORI’s task scheduling and energy usage, maximizing rewards within constraints like battery life and deadlines. |
-| **Greedy Algorithms** | Makes locally optimal choices for global optima. Suitable for problems like interval scheduling and resource allocation. | Schedule CORI’s real-time tasks by prioritizing high-efficiency or urgent tasks to maximize productivity. |
-| **Two Pointers** | Efficient technique for array/list traversal, often used for finding pairs or optimizing iterations. | Process CORI’s sensor data streams to detect patterns or anomalies in real-time movement or object detection. |
-| **Sliding Window** | Optimizes subarray/substring problems by maintaining a dynamic window, reducing time complexity. | Analyze continuous sensor data for CORI to detect patterns in laundry item sequences or spatial movements. |
+## Topics Covered (Ordered by Industry Relevance)
+
+**VERY HIGH Priority (Study First):** Arrays/Lists, Stacks & Queues, Hash Maps/Tables
+**MEDIUM Priority:** Heaps, Two Pointers, Sliding Window  
+**LOW Priority:** All others
+| Topic | Real-Time Robotics Application | Priority |
+|-------|-------------------------------|----------|
+|  **Arrays/Lists** | Audio sample processing, LED pattern storage, sensor calibration data | **VERY HIGH** |
+|  **Stacks & Queues** | Audio pipeline buffering, sensor data streaming, real-time communication | **VERY HIGH** |
+| **Hash Maps/Tables** | Sensor data caching, device state management, protocol message routing | **VERY HIGH** |
+| **Heaps (Priority Queues)** | Task scheduling, interrupt handling, resource allocation | **MEDIUM** |
+| **Two Pointers** | Sensor data synchronization, audio stream alignment, timing calibration | **MEDIUM** |
+| **Sliding Window** | Real-time audio analysis, sensor signal processing, pattern detection | **MEDIUM** |
+| **Strings** | Protocol parsing, command processing, configuration management | **LOW** |
+| **Linked Lists** | Device chain management, message queuing, dynamic resource allocation | **LOW** |
+| **Trees** | Hierarchical device management, decision trees, configuration trees | **LOW** |
+| **Graphs** | Device topology, communication networks, dependency management | **LOW** |
+| **Sorting** | Sensor data organization, priority ordering, calibration sequences | **LOW** |
+| **Searching** | Device discovery, sensor lookup, configuration retrieval | **LOW** |
+| **Recursion & Backtracking** | Error recovery, state restoration, fault tolerance | **LOW** |
+| **Dynamic Programming** | Resource optimization, timing optimization, energy management | **LOW** |
+| **Greedy Algorithms** | Real-time scheduling, bandwidth allocation, power management | **LOW** |
 
 ## 1. Arrays/Lists
 
@@ -44,62 +49,20 @@ Achieve a comprehensive understanding and mastery of data structures and algorit
 - **Time Complexities**: Access O(1), Search O(n), Insertion O(n), Deletion O(n)
 - **Space Complexity**: O(n) for storage
 
-### Notes:
--
+### (45-Minute) CORI Challenge:
+**Problem: CORI's head system is dropping sensor data during high-frequency operations**
 
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
+CORI's head contains multiple sensors (cameras, microphones, LEDs) that generate data at different rates. During complex tasks, we're losing critical sensor readings because our current system can't handle the data flow efficiently.
 
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
+**Your task:** Design and implement a solution that ensures no sensor data is lost, even during peak operation periods.
 
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
+**Consider:**
+- Multiple sensor types with different data rates
+- Memory constraints on the embedded system
+- Real-time processing requirements
+- How to handle sensor failures or delays
 
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
-**Problem: Robot Path Memory Optimization**
-
-You're implementing CORI's movement history system. The robot stores its head positions as a list of angles (in radians) where each position represents where CORI looked during laundry sorting.
-
-```python
-def optimize_movement_history(positions, max_memory=100):
-    """
-    Given a list of head positions, implement a system that:
-    1. Keeps only the most recent max_memory positions
-    2. Removes consecutive duplicate positions (robot staying still)
-    3. Returns the optimized position list and the compression ratio
-    
-    Args:
-        positions: List[float] - head angles in radians
-        max_memory: int - maximum positions to keep
-    
-    Returns:
-        Tuple[List[float], float] - (optimized_positions, compression_ratio)
-    
-    Example:
-        positions = [0.0, 0.0, 0.5, 0.5, 0.5, 1.0, 1.0, 0.0]
-        max_memory = 6
-        # Should return ([0.0, 0.5, 1.0, 0.0], 0.5)
-    """
-    pass
-
-# Additional challenge: Implement a circular buffer for real-time position tracking
-class HeadPositionBuffer:
-    def __init__(self, capacity):
-        pass
-    
-    def add_position(self, angle):
-        pass
-    
-    def get_recent_positions(self, count):
-        pass
-```
-
-**Time Limit: 30 minutes**
-**Follow-up Questions**: How would you handle concurrent access? What if positions need timestamps?
+**Build whatever solution you think is best - there's no single "correct" approach.**
 
 ---
 
@@ -114,68 +77,20 @@ class HeadPositionBuffer:
 - **Common Patterns**: Palindromes, anagrams, subsequences, substrings
 - **Time Complexities**: Most operations O(n), concatenation can be O(n²) without optimization
 
-### Notes:
--
+### (45-Minute) CORI Challenge:
+**Problem: CORI struggles to understand user commands in natural conversation**
 
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
+Users want to talk to CORI naturally, but the current system only understands rigid command patterns. When users say things like "Can you help me find my blue shirt?" or "I need to sort the dark clothes", CORI gets confused and asks them to repeat in a specific format.
 
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
+**Your task:** Build a system that allows CORI to understand natural language commands and extract the key information needed to perform household tasks.
 
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
+**Consider:**
+- Users speak in many different ways
+- Commands might be unclear or incomplete  
+- How to handle typos and variations
+- What to do when CORI isn't sure what the user wants
 
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
-**Problem: Natural Language Command Parser**
-
-CORI needs to parse user commands for laundry sorting. Implement a command parser that extracts color and action from natural language inputs.
-
-```python
-def parse_laundry_command(command):
-    """
-    Parse natural language commands for CORI's laundry system.
-    
-    Valid patterns:
-    - "sort [color] items" -> ("sort", color)
-    - "find my [color] [clothing_type]" -> ("find", color, clothing_type)  
-    - "where did you put the [color] clothes" -> ("locate", color)
-    - "show me [color] statistics" -> ("stats", color)
-    
-    Args:
-        command: str - user's natural language command
-        
-    Returns:
-        Dict with parsed components or error message
-        
-    Examples:
-        "sort red items" -> {"action": "sort", "color": "red"}
-        "find my blue shirt" -> {"action": "find", "color": "blue", "item": "shirt"}
-        "invalid command" -> {"error": "Command not recognized"}
-    """
-    pass
-
-def validate_color(color_name):
-    """
-    Check if the color name is in CORI's known color database.
-    Support variations like "dark blue", "light green", etc.
-    """
-    known_colors = ["red", "blue", "green", "yellow", "black", "white", "purple", "orange"]
-    pass
-
-def extract_clothing_type(text):
-    """
-    Extract clothing type from text (shirt, pants, socks, etc.)
-    Handle plurals and common variations.
-    """
-    pass
-```
-
-**Time Limit: 35 minutes**
-**Follow-up**: How would you handle typos and fuzzy matching?
+**Build whatever solution you think is best - there's no single "correct" approach.**
 
 ---
 
@@ -190,82 +105,21 @@ def extract_clothing_type(text):
 - **Time Complexities**: Access O(n), Search O(n), Insertion O(1) at known position
 - **Memory**: More overhead than arrays due to pointer storage
 
-### Notes:
--
+### (45-Minute) CORI Challenge:
+**Problem: CORI gets overwhelmed and can't prioritize tasks effectively**
 
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
+CORI receives multiple task requests throughout the day - from "find my keys" to "sort the laundry" to "water the plants". Currently, CORI processes tasks in the order they arrive, which creates problems when urgent tasks come in while CORI is busy with less important work.
 
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
+**Your task:** Build a system that helps CORI manage and prioritize tasks intelligently, ensuring important work gets done first while still being fair to all requests.
 
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
+**Consider:**
+- Tasks have different priorities and time requirements
+- New urgent tasks can arrive at any time
+- Users might want to cancel or modify existing tasks
+- How to balance efficiency with fairness
+- What happens when CORI is overloaded with requests
 
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
-**Problem: Robot Task Queue with Priority**
-
-Implement a doubly-linked list to manage CORI's task queue where each task has a priority and can be inserted, removed, or reordered efficiently.
-
-```python
-class Task:
-    def __init__(self, task_id, description, priority, estimated_time):
-        self.task_id = task_id
-        self.description = description  # "sort_red_items", "find_blue_shirt", etc.
-        self.priority = priority        # 1 (highest) to 10 (lowest)
-        self.estimated_time = estimated_time  # seconds
-        self.next = None
-        self.prev = None
-
-class TaskQueue:
-    def __init__(self):
-        self.head = None
-        self.tail = None
-        self.size = 0
-    
-    def add_task(self, task):
-        """Add task maintaining priority order (highest priority first)"""
-        pass
-    
-    def get_next_task(self):
-        """Remove and return the highest priority task"""
-        pass
-    
-    def cancel_task(self, task_id):
-        """Remove specific task by ID"""
-        pass
-    
-    def reorder_by_time(self):
-        """Reorder tasks to minimize total completion time"""
-        pass
-    
-    def display_queue(self):
-        """Return list of tasks in current order"""
-        pass
-
-# Test case
-def test_cori_task_queue():
-    queue = TaskQueue()
-    
-    # Add various laundry tasks
-    tasks = [
-        Task(1, "sort_red_items", 3, 30),
-        Task(2, "find_blue_shirt", 1, 15),  # Urgent - user asking
-        Task(3, "analyze_hamper", 5, 60),
-        Task(4, "sort_white_items", 2, 25)
-    ]
-    
-    for task in tasks:
-        queue.add_task(task)
-    
-    # Should execute in priority order: blue_shirt -> white_items -> red_items -> analyze_hamper
-```
-
-**Time Limit: 40 minutes**
-**Follow-up**: How would you handle task dependencies?
+**Build whatever solution you think is best - there's no single "correct" approach.**
 
 ---
 
@@ -279,22 +133,7 @@ def test_cori_task_queue():
 - **Time Complexities**: All operations O(1) with proper implementation
 - **deque**: Double-ended queue, efficient operations at both ends
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: Robot State Management System**
 
 Implement a state management system for CORI using stacks and queues to handle undo operations and task scheduling.
@@ -392,22 +231,7 @@ def test_state_manager():
 - **Sets**: Hash tables without values, for membership testing
 - **defaultdict & Counter**: Specialized dictionary subclasses
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Adaptive Learning Database**
 
 Implement an intelligent caching system for CORI's learning database that tracks user preferences, confidence scores, and pattern recognition with efficient lookups and updates.
@@ -536,22 +360,7 @@ def test_learning_system():
 - **Tree Properties**: Height, depth, complete, full, perfect trees
 - **Applications**: File systems, expression parsing, decision trees
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Decision Tree for Clothing Classification**
 
 Build a decision tree system that helps CORI classify clothing items based on multiple attributes and learn from user corrections.
@@ -726,22 +535,7 @@ def test_clothing_classifier():
 - **Applications**: Social networks, routing, dependency resolution
 - **Time Complexities**: BFS/DFS O(V+E), Dijkstra O((V+E)log V)
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Household Navigation Graph**
 
 Implement a graph-based navigation system for CORI to find optimal paths through a house while considering obstacles, carrying capacity, and energy efficiency.
@@ -968,22 +762,7 @@ def test_cori_navigation():
 - **Time Complexities**: Insert/Delete O(log n), Peek O(1), Build O(n)
 - **Applications**: Priority queues, Dijkstra's algorithm, sorting
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Dynamic Task Prioritization System**
 
 Implement a sophisticated priority queue system for CORI that dynamically adjusts task priorities based on urgency, user preferences, energy levels, and learning from past performance.
@@ -1244,22 +1023,7 @@ def test_adaptive_task_scheduling():
 - **Stability**: Maintains relative order of equal elements
 - **Adaptive**: Performs better on partially sorted data
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Multi-Criteria Laundry Sorting System**
 
 Implement a custom sorting system that sorts laundry items by multiple criteria (color similarity, fabric care requirements, user priority) with different sorting algorithms optimized for different scenarios.
@@ -1552,22 +1316,7 @@ def test_cori_sorting_system():
 - **Applications**: Searching, finding bounds, optimization problems
 - **Python**: `bisect` module for insertion points
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Efficient Object Search in Sorted Spatial Database**
 
 Implement binary search variants to help CORI quickly locate objects in its spatial memory database, which is sorted by various criteria like position, last seen time, and confidence scores.
@@ -1890,22 +1639,7 @@ def test_cori_binary_search_system():
 - **Backtracking**: Systematic exploration with undoing of choices
 - **Applications**: Tree traversal, combinatorial problems, maze solving
 
-### Notes:
--
-
-### LeetCode Problems (AM):
-_[Track morning problem-solving sessions]_
-
-### ChatGPT Conversation (AM):
-_[Record key discussions and clarifications from morning study]_
-
-### ChatGPT Conversation (PM):
-_[Evening review and deeper concept exploration]_
-
-### LeetCode Problems (PM):
-_[Evening practice problems and solutions]_
-
-### CORI Specific Challenge:
+### (45-Minute) CORI Challenge:
 **Problem: CORI's Path Planning with Obstacle Avoidance**
 
 Implement recursive pathfinding and backtracking algorithms for CORI to navigate through a house while avoiding obstacles and finding optimal laundry collection routes.
