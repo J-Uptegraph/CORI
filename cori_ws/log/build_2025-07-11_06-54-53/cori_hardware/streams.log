@@ -1,0 +1,49 @@
+[0.534s] Invoking command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_hardware': PYTHONPATH=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/cori_hardware build --build-base /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build install --record /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/install.log --single-version-externally-managed install_data
+[0.718s] running egg_info
+[0.718s] creating ../../build/cori_hardware/cori_hardware.egg-info
+[0.718s] writing ../../build/cori_hardware/cori_hardware.egg-info/PKG-INFO
+[0.719s] writing dependency_links to ../../build/cori_hardware/cori_hardware.egg-info/dependency_links.txt
+[0.719s] writing entry points to ../../build/cori_hardware/cori_hardware.egg-info/entry_points.txt
+[0.719s] writing requirements to ../../build/cori_hardware/cori_hardware.egg-info/requires.txt
+[0.719s] writing top-level names to ../../build/cori_hardware/cori_hardware.egg-info/top_level.txt
+[0.719s] writing manifest file '../../build/cori_hardware/cori_hardware.egg-info/SOURCES.txt'
+[0.720s] reading manifest file '../../build/cori_hardware/cori_hardware.egg-info/SOURCES.txt'
+[0.720s] writing manifest file '../../build/cori_hardware/cori_hardware.egg-info/SOURCES.txt'
+[0.720s] running build
+[0.720s] running build_py
+[0.720s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build
+[0.720s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib
+[0.720s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware
+[0.720s] copying cori_hardware/arduino_bridge.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware
+[0.720s] copying cori_hardware/hardware_test.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware
+[0.720s] copying cori_hardware/__init__.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware
+[0.720s] copying cori_hardware/hardware_integration.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware
+[0.720s] running install
+[0.721s] running install_lib
+[0.721s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware
+[0.721s] copying /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware/arduino_bridge.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware
+[0.721s] copying /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware/hardware_test.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware
+[0.721s] copying /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware/__init__.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware
+[0.721s] copying /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build/lib/cori_hardware/hardware_integration.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware
+[0.721s] byte-compiling /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware/arduino_bridge.py to arduino_bridge.cpython-310.pyc
+[0.723s] byte-compiling /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware/hardware_test.py to hardware_test.cpython-310.pyc
+[0.723s] byte-compiling /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware/__init__.py to __init__.cpython-310.pyc
+[0.724s] byte-compiling /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware/hardware_integration.py to hardware_integration.cpython-310.pyc
+[0.725s] running install_data
+[0.725s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/ament_index
+[0.725s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/ament_index/resource_index
+[0.725s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/ament_index/resource_index/packages
+[0.725s] copying resource/cori_hardware -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/ament_index/resource_index/packages
+[0.725s] copying package.xml -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/cori_hardware
+[0.725s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/cori_hardware/arduino
+[0.725s] copying arduino/cori_head_controller/cori_head_controller.ino -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/cori_hardware/arduino
+[0.725s] creating /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/cori_hardware/launch
+[0.725s] copying launch/cori_hardware.launch.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/cori_hardware/launch
+[0.725s] running install_egg_info
+[0.727s] Copying ../../build/cori_hardware/cori_hardware.egg-info to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware-1.0.0-py3.10.egg-info
+[0.727s] running install_scripts
+[0.739s] Installing arduino_bridge script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[0.739s] Installing hardware_integration script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[0.740s] Installing hardware_test script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[0.740s] writing list of installed files to '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/install.log'
+[0.756s] Invoked command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_hardware' returned '0': PYTHONPATH=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/cori_hardware build --build-base /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build install --record /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/install.log --single-version-externally-managed install_data

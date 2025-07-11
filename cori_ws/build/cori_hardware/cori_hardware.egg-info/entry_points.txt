@@ -1,0 +1,5 @@
+[console_scripts]
+arduino_bridge = cori_hardware.arduino_bridge:main
+hardware_integration = cori_hardware.hardware_integration:main
+hardware_test = cori_hardware.hardware_test:main
+
