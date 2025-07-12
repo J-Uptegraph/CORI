@@ -211,6 +211,49 @@ run_webcam_color() {
     cleanup_processes "webcam color detection"
 }
 
+# Run hardware bridge
+run_hardware_bridge() {
+    [ $(check_file "$INTEGRATION_PATH"; echo $?) -ne 0 ] && exit 1
+    cleanup_processes "hardware bridge"
+    trap 'cleanup_processes "hardware bridge"; exit 0' SIGINT
+    echo "🔗 ESP32 HARDWARE BRIDGE + FULL SYSTEM"
+    echo "======================================="
+    echo "🤖 Full Gazebo simulation with ESP32 hardware integration"
+    echo "📌 ESP32 detected - launching complete system"
+    echo "🎯 Features:"
+    echo "   🎮 Gazebo simulation"
+    echo "   📷 Camera detection with head movement"
+    echo "   🧠 Unified database"
+    echo "   🔗 ESP32 hardware bridge"
+    read -p "🚀 Start full hardware integration? [y/N]: " confirm
+    [[ ! $confirm =~ ^[Yy]$ ]] && { echo "👋 Cancelled"; exit 0; }
+    
+    # Fix lib directory structure for ROS2 launch
+    mkdir -p install/cori_hardware/lib/cori_hardware
+    cp install/cori_hardware/bin/* install/cori_hardware/lib/cori_hardware/ 2>/dev/null || true
+    
+    echo "🔌 Starting ESP32 hardware bridge..."
+    source install/setup.bash
+    ros2 launch cori_hardware hardware_bridge.launch.py &
+    BRIDGE_PID=$!
+    sleep 3
+    
+    echo "🎮 Starting Gazebo simulation..."
+    start_gazebo GAZEBO_PID
+    echo "🔍 Verifying Gazebo startup..."
+    sleep 5
+    
+    echo "📷 Starting camera for integration..."
+    start_webcam WEBCAM_PID
+    sleep 3
+    
+    echo "🔗 Starting CORI integration system..."
+    cd src/cori_tools/cori_tools/
+    # Auto-select Ignition Full mode (option 2) via command line argument
+    python3 cori_ignition_integration.py 2
+    cleanup_processes "hardware bridge"
+}
+
 
 # Run laundry assistant
 run_laundry_assistant() {
@@ -294,9 +337,10 @@ main() {
         "3) 🧺 Laundry Sorting Assistant"
         "4) 📷 Webcam Color Detection"
         "5) 🦾 Manual Robot Control"
-        "6) 🧹 Kill All ROS Processes"
-        "7) 🔗 System Test"
-        "8) 🚪 Exit"
+        "6) 🔗 ESP32 Hardware Bridge"
+        "7) 🧹 Kill All ROS Processes"
+        "8) 🔗 System Test"
+        "9) 🚪 Exit"
     )
 
     for item in "${menu_items[@]}"; do
@@ -309,16 +353,17 @@ main() {
     echo "╰"$(printf '─%.0s' $(seq 1 $menu_inner_width))"╯"
     # --- End of Menu Box ---
 
-    read -p "Enter choice [1-8]: " choice
+    read -p "Enter choice [1-9]: " choice
     case $choice in
         1) run_full_system ;;
         2) run_gazebo_only ;;
         3) run_laundry_assistant ;;
         4) run_webcam_color ;;
         5) run_manual_control ;;
-        6) kill_all_processes ;;
-        7) run_system_test ;;
-        8) echo "👋 Exiting..."; exit 0 ;;
+        6) run_hardware_bridge ;;
+        7) kill_all_processes ;;
+        8) run_system_test ;;
+        9) echo "👋 Exiting..."; exit 0 ;;
         *) echo "❌ Invalid choice"; exit 1 ;;
     esac
     echo "🏁 CORI system ended."

@@ -1,3 +1,0 @@
-[console_scripts]
-joint_controller = cori_control.joint_controller:main
-
