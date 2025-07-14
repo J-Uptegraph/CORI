@@ -11,7 +11,8 @@ setup.py
 arduino/cori_head_controller/cori_head_controller.ino
 cori_hardware/__init__.py
 cori_hardware/arduino_bridge.py
+cori_hardware/hardware_bridge.py
 cori_hardware/hardware_integration.py
 cori_hardware/hardware_test.py
-launch/cori_hardware.launch.py
+launch/hardware_bridge.launch.py
 resource/cori_hardware

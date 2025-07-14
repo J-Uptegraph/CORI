@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/arduino', ['arduino/cori_head_controller/cori_head_controller.ino']),
-        ('share/' + package_name + '/launch', ['launch/cori_hardware.launch.py']),
+        ('share/' + package_name + '/launch', ['launch/hardware_bridge.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,6 +25,7 @@ setup(
             'arduino_bridge = cori_hardware.arduino_bridge:main',
             'hardware_test = cori_hardware.hardware_test:main',
             'hardware_integration = cori_hardware.hardware_integration:main',
+            'hardware_bridge = cori_hardware.hardware_bridge:main',
         ],
     },
 )

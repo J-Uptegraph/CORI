@@ -444,6 +444,14 @@ class IgnitionRobotController:
                 self.current_angles[joint_name] = 0.0
                 print(f"✅ Connected to joint: {topic}")
             
+            # Create color publisher for hardware bridge
+            self.color_publisher = self.node.create_publisher(
+                String,
+                '/detected_color',
+                10
+            )
+            print("✅ Connected to color topic: /detected_color")
+            
             print(f"✅ Robot controller initialized with {len(joint_topics)} joints")
             
         except Exception as e:
@@ -467,6 +475,13 @@ class IgnitionRobotController:
         
         target_angle = color_angles.get(color, 0.0)
         self.move_head(target_angle)
+        
+        # Publish color to hardware bridge
+        if hasattr(self, 'color_publisher') and self.color_publisher:
+            color_msg = String()
+            color_msg.data = color.lower()
+            self.color_publisher.publish(color_msg)
+            print(f"📡 Published color '{color}' to hardware bridge")
         
         angle_degrees = math.degrees(target_angle)
         # Fixed direction mapping - flip LEFT and RIGHT
