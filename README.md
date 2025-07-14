@@ -14,6 +14,7 @@ This isn't about automating tasks—it's about reclaiming our time and energy by
 
 | Version | Date         | Description                                     | Link                                                    |
 |---------|--------------|-------------------------------------------------|---------------------------------------------------------|
+| `v1.7`  | July 13, 2025 | Hardware Integration with Arduino and Getting Started with SPI | [View v1.7](docs/project_updates/v1.7_update.md) |
 | `v1.6`  | July 1, 2025 | Architecture Refactor & Physical-Virtual Sensor Fusion  | [View v1.6](docs/project_updates/v1.6_update.md) |
 | `v1.5`  | June 27, 2025 | Laundry Sorting Intelligence & Adaptive Learning | [View v1.5](docs/project_updates/v1.5_update.md) |
 | `v1.4`  | June 24, 2025 | Independent Joint Controled URDF               | [View v1.4](docs/project_updates/v1.4_update.md)        |
