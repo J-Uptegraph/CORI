@@ -1,0 +1,25 @@
+# CORI Hardware Web API Requirements
+
+# Web API Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Serial Communication
+pyserial>=3.5
+
+# HTTP Requests (for ROS bridge)
+requests>=2.31.0
+
+# Data Validation
+pydantic>=2.4.0
+
+# CORS Support
+python-multipart>=0.0.6
+
+# Optional: For development and testing
+pytest>=7.4.0
+httpx>=0.25.0  # For async testing
+
+# ROS2 Dependencies (should already be available in ROS2 environment)
+# rclpy (provided by ROS2)
+# std_msgs (provided by ROS2)
