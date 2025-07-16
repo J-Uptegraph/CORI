@@ -1,0 +1,12 @@
+source;share/cori_hardware/hook/path.ps1
+source;share/cori_hardware/hook/path.dsv
+source;share/cori_hardware/hook/path.sh
+source;share/cori_hardware/hook/pythonpath.ps1
+source;share/cori_hardware/hook/pythonpath.dsv
+source;share/cori_hardware/hook/pythonpath.sh
+source;share/cori_hardware/hook/pythonscriptspath.ps1
+source;share/cori_hardware/hook/pythonscriptspath.dsv
+source;share/cori_hardware/hook/pythonscriptspath.sh
+source;share/cori_hardware/hook/ament_prefix_path.ps1
+source;share/cori_hardware/hook/ament_prefix_path.dsv
+source;share/cori_hardware/hook/ament_prefix_path.sh
