@@ -85,18 +85,44 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
     cleanup_processes() {
         local mode="$1"
         echo "🛑 Stopping $mode processes..."
+        
+        # Kill ROS2 processes
         pkill -f "ros2 launch" 2>/dev/null || true
         pkill -f "ros2 run" 2>/dev/null || true
+        
+        # Kill Gazebo/Ignition processes
         pkill -f "ign gazebo" 2>/dev/null || true
         pkill -f "gz sim" 2>/dev/null || true
+        pkill -f "gazebo" 2>/dev/null || true
+        
+        # Kill camera processes
         pkill -f "v4l2_camera" 2>/dev/null || true
+        
+        # Kill ROS2 core processes
         pkill -f "robot_state_publisher" 2>/dev/null || true
+        pkill -f "joint_state_publisher" 2>/dev/null || true
+        pkill -f "parameter_bridge" 2>/dev/null || true
+        
+        # Kill CORI-specific processes
         pkill -f "cori_vision" 2>/dev/null || true
         pkill -f "cori_gui" 2>/dev/null || true
         pkill -f "cori_simulation" 2>/dev/null || true
         pkill -f "cori_tools" 2>/dev/null || true
-        pkill -f "spatial_database" 2>/dev/null || true
         pkill -f "cori_ignition_integration" 2>/dev/null || true
+        pkill -f "spatial_database" 2>/dev/null || true
+        
+        # Kill hardware bridge processes
+        pkill -f "realtime_web_control" 2>/dev/null || true
+        pkill -f "hardware_bridge" 2>/dev/null || true
+        
+        # Kill web server processes on port 8091
+        pkill -f "python.*8091" 2>/dev/null || true
+        pkill -f "http.server.*8091" 2>/dev/null || true
+        
+        # Force kill any remaining python processes that might be CORI-related
+        pgrep -f "cori.*python" | xargs -r kill -9 2>/dev/null || true
+        
+        # Wait for processes to terminate
         sleep 3
         echo "✅ $mode processes stopped"
     }
