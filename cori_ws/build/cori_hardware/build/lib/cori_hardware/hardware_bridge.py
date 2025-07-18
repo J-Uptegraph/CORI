@@ -37,6 +37,14 @@ class CORIHardwareBridge(Node):
             10
         )
         
+        # ROS subscriptions - listen to tilt joint commands
+        self.tilt_cmd_subscription = self.create_subscription(
+            Float64,
+            '/model/cori/tilt_joint/cmd_pos',
+            self.tilt_cmd_callback,
+            10
+        )
+        
         # ROS subscriptions - listen to color commands  
         self.color_subscription = self.create_subscription(
             String,
@@ -45,8 +53,9 @@ class CORIHardwareBridge(Node):
             10
         )
         
-        # Track current head position
-        self.current_head_angle = 0.0
+        # Track current head positions
+        self.current_head_angle = 0.0  # Pan angle
+        self.current_tilt_angle = 0.0  # Tilt angle
         
         # Start serial reading thread
         self.serial_thread = threading.Thread(target=self.read_serial)
@@ -191,6 +200,25 @@ class CORIHardwareBridge(Node):
                 
         except Exception as e:
             self.get_logger().error(f"❌ Head command callback error: {e}")
+    
+    def tilt_cmd_callback(self, msg):
+        """Handle tilt joint position commands"""
+        try:
+            angle = msg.data
+            
+            # Only send if angle changed significantly
+            if abs(angle - self.current_tilt_angle) > 0.05:
+                self.current_tilt_angle = angle
+                
+                # Convert radians to degrees for ESP32
+                angle_deg = math.degrees(angle)
+                
+                # Send tilt command directly to ESP32
+                self.send_command(f"TILT:{angle:.3f}")
+                self.get_logger().info(f"🎯 Tilt command: {angle:.3f} rad ({angle_deg:.1f}°) → ESP32")
+                
+        except Exception as e:
+            self.get_logger().error(f"❌ Tilt command callback error: {e}")
     
     def color_callback(self, msg):
         """Handle color detection from vision system"""

@@ -157,10 +157,13 @@ class CORIRealtimeWebControl(Node):
             processing_time = (time.time() - start_time) * 1000  # ms
             
             await self.broadcast_feedback({
+                "type": "command_executed",
                 "command": command_type,
+                "command_data": data,
                 "processing_time_ms": round(processing_time, 2),
                 "command_count": self.command_count,
-                "timestamp": time.time()
+                "timestamp": time.time(),
+                "total_users": len(self.websocket_clients)
             })
             
             self.last_command_time = time.time()
@@ -208,13 +211,13 @@ class CORIRealtimeWebControl(Node):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         
-        self.get_logger().info("🌐 WebSocket server starting on ws://localhost:8766")
+        self.get_logger().info("🌐 WebSocket server starting on ws://localhost:8767")
         
         async def start_server():
             async with websockets.serve(
                 self.handle_client,
                 "0.0.0.0",
-                8766,
+                8767,
                 ping_interval=None,  # Disable ping for lower latency
                 ping_timeout=None,
                 origins=None  # Allow all origins for GitHub Pages
@@ -239,7 +242,7 @@ def main(args=None):
         server_thread = controller.start_server()
         
         controller.get_logger().info("🤖 CORI Real-time Web Control Running")
-        controller.get_logger().info("🌐 WebSocket server: ws://localhost:8766")
+        controller.get_logger().info("🌐 WebSocket server: ws://localhost:8767")
         controller.get_logger().info("📡 Publishing to:")
         controller.get_logger().info("   /model/cori/joint/head_joint/cmd_pos")
         controller.get_logger().info("   /cori/hardware_command")

@@ -291,7 +291,7 @@ run_realtime_web_control() {
     echo "   🤖 Controls both simulation AND physical robot"
     echo ""
     echo "🌐 Web Interface: http://localhost:8091/index.html"
-    echo "🔌 WebSocket API: ws://localhost:8766"
+    echo "🔌 WebSocket API: ws://localhost:8767"
     echo "🔌 ESP32 Hardware: Auto-detected and connected"
     echo ""
     read -p "🚀 Start real-time web control? [y/N]: " confirm

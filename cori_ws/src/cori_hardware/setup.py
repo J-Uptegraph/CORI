@@ -12,6 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/arduino', ['arduino/cori_head_controller/cori_head_controller.ino']),
         ('share/' + package_name + '/launch', ['launch/hardware_bridge.launch.py', 'launch/realtime_web_control.launch.py']),
+        ('share/' + package_name + '/web', ['cori_hardware/index.html']),
     ],
     install_requires=['setuptools', 'websockets>=10.0'],
     zip_safe=True,

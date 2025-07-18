@@ -37,10 +37,12 @@ def generate_launch_description():
         ]
     )
     
-    # HTTP server to serve the web interface
+    # HTTP server to serve the web interface (accessible from internet)
+    # Use absolute path to source directory for development
+    package_dir = '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_hardware/cori_hardware'
     web_server_process = ExecuteProcess(
-        cmd=['python3', '-m', 'http.server', '8091'],
-        cwd=os.path.join(os.path.dirname(__file__), '..', 'cori_hardware'),
+        cmd=['python3', '-m', 'http.server', '8091', '--bind', '0.0.0.0'],
+        cwd=package_dir,
         output='screen'
     )
     

@@ -1,0 +1,17 @@
+[2.295s] Invoking command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_vision': PYTHONPATH=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/cori_vision build --build-base /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_vision/build install --record /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_vision/install.log --single-version-externally-managed install_data
+[2.366s] Traceback (most recent call last):
+[2.366s]   File "/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_vision/setup.py", line 1, in <module>
+[2.366s]     from setuptools import setup
+[2.366s]   File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 16, in <module>
+[2.375s]     import setuptools.version
+[2.376s]   File "/usr/lib/python3/dist-packages/setuptools/version.py", line 1, in <module>
+[2.377s]     import pkg_resources
+[2.377s]   File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 30, in <module>
+[2.378s]     import platform
+[2.378s]   File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+[2.378s]   File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+[2.378s]   File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+[2.378s]   File "<frozen importlib._bootstrap_external>", line 879, in exec_module
+[2.379s]   File "<frozen importlib._bootstrap_external>", line 1012, in get_code
+[2.379s]   File "<frozen importlib._bootstrap_external>", line 672, in _compile_bytecode
+[2.379s] KeyboardInterrupt

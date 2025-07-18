@@ -156,7 +156,7 @@
       if (command == "1") {
         currentMode = GAZEBO;
         Serial.println("Entering Gazebo Mode");
-        Serial.println("Commands: ANGLE:<radians>, COLOR:<color_name>, <color_name>, CENTER, STATUS, NOD, TEST, MENU, MANUAL, WIFI");
+        Serial.println("Commands: ANGLE:<radians>, TILT:<radians>, COLOR:<color_name>, <color_name>, CENTER, STATUS, NOD, TEST, MENU, MANUAL, WIFI");
         Serial.println("Colors: RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, GREY, BLACK");
       } else if (command == "2") {
         currentMode = MANUAL;
@@ -339,6 +339,11 @@
       moveToAngle(angleRad);
       Serial.print("OK:ANGLE:");
       Serial.println(angleRad, 3);
+    } else if (command.startsWith("TILT:")) {
+      float angleRad = command.substring(5).toFloat();
+      moveToTiltAngle(angleRad);
+      Serial.print("OK:TILT:");
+      Serial.println(angleRad, 3);
     } else if (command.startsWith("COLOR:")) {
       String colorName = command.substring(6);
       colorName.toLowerCase();
@@ -452,7 +457,7 @@
       } else if (command == "GAZEBO") {
         currentMode = GAZEBO;
         Serial.println("Switching to Gazebo Mode");
-        Serial.println("Commands: ANGLE:<radians>, COLOR:<color_name>, <color_name>, CENTER, STATUS, NOD, TEST, MENU, MANUAL, WIFI");
+        Serial.println("Commands: ANGLE:<radians>, TILT:<radians>, COLOR:<color_name>, <color_name>, CENTER, STATUS, NOD, TEST, MENU, MANUAL, WIFI");
         Serial.println("Colors: RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, GREY, BLACK");
       } else if (command == "WIFI") {
         currentMode = WIFI;
@@ -545,6 +550,21 @@
     currentPanAngle = servoAngle;
 
     Serial.print("DEBUG:MOVE:");
+    Serial.print(angleRad, 3);
+    Serial.print("rad:");
+    Serial.print(servoAngle);
+    Serial.println("deg");
+  }
+
+  void moveToTiltAngle(float angleRad) {
+    // Constrain tilt angle to a more limited range
+    angleRad = constrain(angleRad, -1.0, 1.0);
+    int servoAngle = map(angleRad * 1000, -1000, 1000, SERVO_MIN, SERVO_MAX);
+    
+    smoothTiltMove(currentTiltAngle, servoAngle);
+    currentTiltAngle = servoAngle;
+    
+    Serial.print("DEBUG:TILT:");
     Serial.print(angleRad, 3);
     Serial.print("rad:");
     Serial.print(servoAngle);

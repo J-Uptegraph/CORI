@@ -1,0 +1,95 @@
+[0.900s] Invoking command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_tools:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_simulation:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_gui:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_core:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_control:/opt/ros/humble /usr/bin/cmake /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_description -DCMAKE_INSTALL_PREFIX=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description
+[2.228s] -- The C compiler identification is GNU 11.4.0
+[2.229s] -- The CXX compiler identification is GNU 11.4.0
+[2.229s] -- Detecting C compiler ABI info
+[2.230s] -- Detecting C compiler ABI info - done
+[2.230s] -- Check for working C compiler: /usr/bin/cc - skipped
+[2.231s] -- Detecting C compile features
+[2.231s] -- Detecting C compile features - done
+[2.231s] -- Detecting CXX compiler ABI info
+[2.231s] -- Detecting CXX compiler ABI info - done
+[2.231s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.231s] -- Detecting CXX compile features
+[2.231s] -- Detecting CXX compile features - done
+[2.231s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[2.231s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[2.231s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[2.231s] -- Added test 'flake8' to check Python code syntax and style conventions
+[2.231s] -- Added test 'lint_cmake' to check CMake code style
+[2.231s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.231s] -- Added test 'xmllint' to check XML markup files
+[2.231s] -- Configuring done
+[2.231s] -- Generating done
+[2.231s] -- Build files have been written to: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description
+[2.735s] Invoked command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_tools:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_simulation:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_gui:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_core:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_control:/opt/ros/humble /usr/bin/cmake /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_description -DCMAKE_INSTALL_PREFIX=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description
+[2.741s] Invoking command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_tools:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_simulation:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_gui:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_core:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_control:/opt/ros/humble /usr/bin/cmake --build /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description -- -j20 -l20
+[2.799s] Invoked command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_tools:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_simulation:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_gui:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_core:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_control:/opt/ros/humble /usr/bin/cmake --build /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description -- -j20 -l20
+[2.819s] Invoking command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_tools:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_simulation:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_gui:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_core:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_control:/opt/ros/humble /usr/bin/cmake --install /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description
+[2.831s] -- Install configuration: ""
+[2.832s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/
+[2.832s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0
+[2.832s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_pelvis.stl
+[2.834s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_shin.stl
+[2.836s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_foot.stl
+[2.838s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_knee.stl
+[2.838s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_forearm.stl
+[2.841s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_thigh.stl
+[2.842s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_hand.stl
+[2.843s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_upper_arm.stl
+[2.845s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_torso.stl
+[2.851s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_forearm.stl
+[2.853s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_knee.stl
+[2.855s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_hand.stl
+[2.855s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_shin.stl
+[2.857s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_right_thigh.stl
+[2.860s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_upper_arm.stl
+[2.864s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_head.stl
+[2.869s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//cori_body_v1.0/cori_left_foot.stl
+[2.869s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//mesh archive
+[2.869s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes//CORI_Solid.stl
+[2.870s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/launch
+[2.870s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/launch/display_rviz.launch.py
+[2.871s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/launch/spawn_cori_ignition.launch.py
+[2.871s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/launch/spawn_cori.launch.py
+[2.871s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes
+[2.871s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0
+[2.871s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_pelvis.stl
+[2.871s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_shin.stl
+[2.872s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_foot.stl
+[2.872s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_knee.stl
+[2.872s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_forearm.stl
+[2.872s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_thigh.stl
+[2.872s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_hand.stl
+[2.872s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_upper_arm.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_torso.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_forearm.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_knee.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_hand.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_shin.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_right_thigh.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_upper_arm.stl
+[2.879s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_head.stl
+[2.880s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/cori_body_v1.0/cori_left_foot.stl
+[2.880s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/mesh archive
+[2.880s] -- Up-to-date: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/meshes/CORI_Solid.stl
+[2.880s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/urdf
+[2.880s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/urdf/cori.urdf.xacro
+[2.881s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/worlds
+[2.881s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/worlds/laundry_world.sdf
+[2.882s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/worlds/simple_world.sdf
+[2.882s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/ament_index/resource_index/package_run_dependencies/cori_description
+[2.882s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/ament_index/resource_index/parent_prefix_path/cori_description
+[2.882s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/environment/ament_prefix_path.sh
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/environment/ament_prefix_path.dsv
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/environment/path.sh
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/environment/path.dsv
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/local_setup.bash
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/local_setup.sh
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/local_setup.zsh
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/local_setup.dsv
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/package.dsv
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/ament_index/resource_index/packages/cori_description
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/cmake/cori_descriptionConfig.cmake
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/cmake/cori_descriptionConfig-version.cmake
+[2.883s] -- Installing: /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_description/share/cori_description/package.xml
+[2.885s] Invoked command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_vision:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_tools:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_simulation:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_gui:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_core:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_control:/opt/ros/humble /usr/bin/cmake --install /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_description
