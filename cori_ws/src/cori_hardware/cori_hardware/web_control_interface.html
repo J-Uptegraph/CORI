@@ -409,6 +409,10 @@
                 angleSlider.addEventListener('input', (e) => {
                     const angle = parseFloat(e.target.value);
                     angleValue.textContent = angle.toFixed(1);
+                });
+                
+                angleSlider.addEventListener('change', (e) => {
+                    const angle = parseFloat(e.target.value);
                     this.sendAngle(angle);
                 });
             }
@@ -438,6 +442,11 @@
             
             setupGamepadControl() {
                 let gamepadIndex = -1;
+                let lastAngle = 0;
+                let lastSendTime = 0;
+                const SEND_INTERVAL = 100; // Only send every 100ms
+                const DEADZONE = 0.1;
+                const ANGLE_THRESHOLD = 0.05; // Only send if angle changed by more than 0.05 rad
                 
                 window.addEventListener('gamepadconnected', (e) => {
                     gamepadIndex = e.gamepad.index;
@@ -448,10 +457,20 @@
                     if (gamepadIndex >= 0) {
                         const gamepad = navigator.getGamepads()[gamepadIndex];
                         if (gamepad) {
+                            const now = Date.now();
+                            
                             // Left stick X-axis for head control
                             const leftX = gamepad.axes[0];
-                            if (Math.abs(leftX) > 0.1) {
-                                this.sendAngle(leftX * 1.5); // Scale to head range
+                            if (Math.abs(leftX) > DEADZONE) {
+                                const newAngle = leftX * 1.5;
+                                
+                                // Only send if enough time has passed AND angle changed significantly
+                                if (now - lastSendTime > SEND_INTERVAL && 
+                                    Math.abs(newAngle - lastAngle) > ANGLE_THRESHOLD) {
+                                    this.sendAngle(newAngle);
+                                    lastAngle = newAngle;
+                                    lastSendTime = now;
+                                }
                             }
                             
                             // Emergency stop on any button
