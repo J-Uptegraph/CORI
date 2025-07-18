@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORI Remote Control</title>
+    <meta name="description" content="Real-time remote control interface for CORI robot - Zero latency WebSocket control">
+    <meta name="keywords" content="robotics, real-time control, WebSocket, ROS2, CORI">
+    <meta name="author" content="Johnathan Uptegraph">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #64942d 0%, #141414 100%);
+            color: #f6f6f6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #73aa2d, #64942d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .connection-panel {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(115, 170, 45, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .connection-form {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .connection-form input {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(20, 20, 20, 0.8);
+            color: #f6f6f6;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(115, 170, 45, 0.6);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .connection-form input::placeholder {
+            color: rgba(246, 246, 246, 0.6);
+        }
+        
+        .connection-form button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #73aa2d, #64942d);
+            color: #f6f6f6;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(115, 170, 45, 0.3);
+        }
+        
+        .connection-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(115, 170, 45, 0.5);
+        }
+        
+        .connection-form button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(20, 20, 20, 0.9);
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid rgba(115, 170, 45, 0.2);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.connected {
+            background: #73aa2d;
+        }
+        
+        .status-dot.connecting {
+            background: #64942d;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .control-panel {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(115, 170, 45, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-panel h3 {
+            margin-bottom: 20px;
+            color: #73aa2d;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .angle-control {
+            margin-bottom: 25px;
+        }
+        
+        .angle-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .angle-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #73aa2d;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .angle-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(20, 20, 20, 0.8);
+            outline: none;
+            margin: 15px 0;
+            cursor: pointer;
+            border: 1px solid rgba(115, 170, 45, 0.3);
+        }
+        
+        .angle-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #73aa2d, #64942d);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .angle-slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #73aa2d, #64942d);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .preset-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(20, 20, 20, 0.6);
+            color: #f6f6f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            border: 1px solid rgba(115, 170, 45, 0.3);
+        }
+        
+        .preset-btn:hover {
+            background: rgba(115, 170, 45, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .color-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            font-size: 14px;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .color-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .hardware-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .control-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(20, 20, 20, 0.6);
+            color: #f6f6f6;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            border: 1px solid rgba(115, 170, 45, 0.3);
+        }
+        
+        .control-btn:hover {
+            background: rgba(115, 170, 45, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .control-btn.emergency {
+            background: linear-gradient(45deg, #ff4444, #ff6666);
+            grid-column: 1 / -1;
+            font-size: 16px;
+        }
+        
+        .control-btn.emergency:hover {
+            background: linear-gradient(45deg, #ff6666, #ff8888);
+        }
+        
+        .feedback-panel {
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(115, 170, 45, 0.3);
+        }
+        
+        .feedback-panel h3 {
+            margin-bottom: 15px;
+            color: #73aa2d;
+            font-size: 1.3em;
+        }
+        
+        .feedback-list {
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(115, 170, 45, 0.3) transparent;
+        }
+        
+        .feedback-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(20, 20, 20, 0.6);
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .feedback-item.success {
+            border-left: 4px solid #73aa2d;
+        }
+        
+        .feedback-item.error {
+            border-left: 4px solid #ff4444;
+        }
+        
+        .feedback-item.info {
+            border-left: 4px solid #64942d;
+        }
+        
+        .latency-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #73aa2d;
+        }
+        
+        .help-section {
+            margin-top: 30px;
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(115, 170, 45, 0.3);
+        }
+        
+        .help-section h3 {
+            color: #73aa2d;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .help-item {
+            background: rgba(20, 20, 20, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .help-item h4 {
+            color: #73aa2d;
+            margin-bottom: 8px;
+        }
+        
+        .help-item p {
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.9);
+            color: #f6f6f6;
+            padding: 15px 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(115, 170, 45, 0.3);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 768px) {
+            .connection-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .hardware-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 CORI Remote Control</h1>
+            <p>Real-time robot control from anywhere in the world</p>
+        </div>
+        
+        <div class="connection-panel">
+            <div class="connection-form">
+                <input type="text" id="wsUrl" placeholder="WebSocket URL (e.g., ws://your-robot-ip:8766)" value="ws://localhost:8766">
+                <button id="connectBtn" onclick="toggleConnection()">Connect</button>
+                <button id="autoDetectBtn" onclick="autoDetect()">Auto-Detect</button>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="connectionStatus"></div>
+                <span id="connectionText">Disconnected</span>
+            </div>
+            <div class="status-item">
+                <span class="latency-display" id="latencyDisplay">-- ms</span>
+            </div>
+            <div class="status-item">
+                <span id="commandCount">Commands: 0</span>
+            </div>
+            <div class="status-item">
+                <span id="robotStatus">Robot: Unknown</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-panel">
+                <h3>🎯 Angle Control</h3>
+                <div class="angle-control">
+                    <div class="angle-display">
+                        <label>Head Angle:</label>
+                        <span class="angle-value" id="angleValue">0.0 rad</span>
+                    </div>
+                    <input type="range" class="angle-slider" id="angleSlider" 
+                           min="-1.8" max="1.8" step="0.1" value="0">
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="setAngle(-1.5)">← Far Left</button>
+                        <button class="preset-btn" onclick="setAngle(0)">⬆ Center</button>
+                        <button class="preset-btn" onclick="setAngle(1.5)">→ Far Right</button>
+                    </div>
+                </div>
+                
+                <h3>🎨 Color Commands</h3>
+                <div class="color-grid">
+                    <button class="color-btn" style="background: #ff4444;" onclick="sendColor('red')">Red</button>
+                    <button class="color-btn" style="background: #ff8844;" onclick="sendColor('orange')">Orange</button>
+                    <button class="color-btn" style="background: #ffff44;" onclick="sendColor('yellow')">Yellow</button>
+                    <button class="color-btn" style="background: #44ff44;" onclick="sendColor('green')">Green</button>
+                    <button class="color-btn" style="background: #4444ff;" onclick="sendColor('blue')">Blue</button>
+                    <button class="color-btn" style="background: #8844ff;" onclick="sendColor('purple')">Purple</button>
+                    <button class="color-btn" style="background: #888888;" onclick="sendColor('grey')">Grey</button>
+                    <button class="color-btn" style="background: #222222;" onclick="sendColor('black')">Black</button>
+                    <button class="color-btn" style="background: #ffffff; color: #333;" onclick="sendColor('white')">White</button>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <h3>⚙️ Hardware Control</h3>
+                <div class="hardware-controls">
+                    <button class="control-btn" onclick="sendHardware('STATUS')">📊 Status</button>
+                    <button class="control-btn" onclick="sendHardware('RESET')">🔄 Reset</button>
+                    <button class="control-btn" onclick="sendHardware('HOME')">🏠 Home</button>
+                    <button class="control-btn" onclick="sendHardware('CALIBRATE')">🎯 Calibrate</button>
+                    <button class="control-btn emergency" onclick="emergencyStop()">🚨 EMERGENCY STOP</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feedback-panel">
+            <h3>📡 System Feedback</h3>
+            <div class="feedback-list" id="feedbackList"></div>
+        </div>
+        
+        <div class="help-section">
+            <h3>💡 Control Methods</h3>
+            <div class="help-grid">
+                <div class="help-item">
+                    <h4>⌨️ Keyboard</h4>
+                    <p>Use arrow keys: ← → for movement, ↑ for center, Space for emergency stop</p>
+                </div>
+                <div class="help-item">
+                    <h4>🎮 Gamepad</h4>
+                    <p>Left stick X-axis controls head movement, any button triggers emergency stop</p>
+                </div>
+                <div class="help-item">
+                    <h4>🖱️ Mouse/Touch</h4>
+                    <p>Click and drag the angle slider, or tap color/control buttons</p>
+                </div>
+                <div class="help-item">
+                    <h4>📱 Mobile</h4>
+                    <p>Optimized for touch controls on smartphones and tablets</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        class CORIRemoteController {
+            constructor() {
+                this.ws = null;
+                this.connected = false;
+                this.connecting = false;
+                this.commandCount = 0;
+                this.setupEventListeners();
+                this.setupKeyboardControl();
+                this.setupGamepadControl();
+                this.loadSettings();
+            }
+            
+            loadSettings() {
+                const savedUrl = localStorage.getItem('cori-websocket-url');
+                if (savedUrl) {
+                    document.getElementById('wsUrl').value = savedUrl;
+                }
+            }
+            
+            saveSettings() {
+                const url = document.getElementById('wsUrl').value;
+                localStorage.setItem('cori-websocket-url', url);
+            }
+            
+            connect() {
+                if (this.connected || this.connecting) return;
+                
+                const url = document.getElementById('wsUrl').value.trim();
+                if (!url) {
+                    this.showNotification('Please enter a WebSocket URL', 'error');
+                    return;
+                }
+                
+                this.connecting = true;
+                this.updateConnectionStatus();
+                this.saveSettings();
+                
+                try {
+                    this.ws = new WebSocket(url);
+                    
+                    this.ws.onopen = () => {
+                        this.connected = true;
+                        this.connecting = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Connected to CORI robot', 'success');
+                        this.showNotification('Connected successfully!', 'success');
+                    };
+                    
+                    this.ws.onmessage = (event) => {
+                        const message = JSON.parse(event.data);
+                        this.handleMessage(message);
+                    };
+                    
+                    this.ws.onclose = () => {
+                        this.connected = false;
+                        this.connecting = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Disconnected from CORI robot', 'error');
+                        this.showNotification('Connection lost', 'error');
+                    };
+                    
+                    this.ws.onerror = (error) => {
+                        this.connecting = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback(`Connection error: ${error.message || 'Unknown error'}`, 'error');
+                        this.showNotification('Connection failed', 'error');
+                    };
+                    
+                    // Connection timeout
+                    setTimeout(() => {
+                        if (this.connecting) {
+                            this.ws.close();
+                            this.connecting = false;
+                            this.updateConnectionStatus();
+                            this.showNotification('Connection timeout', 'error');
+                        }
+                    }, 10000);
+                    
+                } catch (error) {
+                    this.connecting = false;
+                    this.updateConnectionStatus();
+                    this.addFeedback(`Connection error: ${error.message}`, 'error');
+                    this.showNotification('Invalid WebSocket URL', 'error');
+                }
+            }
+            
+            disconnect() {
+                if (this.ws) {
+                    this.ws.close();
+                }
+                this.connected = false;
+                this.connecting = false;
+                this.updateConnectionStatus();
+            }
+            
+            updateConnectionStatus() {
+                const statusDot = document.getElementById('connectionStatus');
+                const statusText = document.getElementById('connectionText');
+                const connectBtn = document.getElementById('connectBtn');
+                
+                statusDot.classList.remove('connected', 'connecting');
+                
+                if (this.connected) {
+                    statusDot.classList.add('connected');
+                    statusText.textContent = 'Connected';
+                    connectBtn.textContent = 'Disconnect';
+                } else if (this.connecting) {
+                    statusDot.classList.add('connecting');
+                    statusText.textContent = 'Connecting...';
+                    connectBtn.textContent = 'Cancel';
+                } else {
+                    statusText.textContent = 'Disconnected';
+                    connectBtn.textContent = 'Connect';
+                }
+            }
+            
+            handleMessage(message) {
+                switch (message.type) {
+                    case 'feedback':
+                        this.handleFeedback(message.data);
+                        break;
+                    case 'status':
+                        this.addFeedback(`Robot: ${message.data}`, 'info');
+                        document.getElementById('robotStatus').textContent = `Robot: ${message.data}`;
+                        break;
+                    case 'error':
+                        this.addFeedback(`Error: ${message.data}`, 'error');
+                        this.showNotification(message.data, 'error');
+                        break;
+                    case 'welcome':
+                        this.addFeedback(message.data, 'success');
+                        break;
+                }
+            }
+            
+            handleFeedback(data) {
+                document.getElementById('latencyDisplay').textContent = `${data.processing_time_ms} ms`;
+                document.getElementById('commandCount').textContent = `Commands: ${data.command_count}`;
+                this.addFeedback(`${data.command} executed in ${data.processing_time_ms}ms`, 'info');
+            }
+            
+            addFeedback(message, type = 'info') {
+                const feedbackList = document.getElementById('feedbackList');
+                const item = document.createElement('div');
+                item.className = `feedback-item ${type}`;
+                
+                const timestamp = new Date().toLocaleTimeString();
+                item.innerHTML = `<span style="opacity: 0.7;">${timestamp}</span> ${message}`;
+                
+                feedbackList.insertBefore(item, feedbackList.firstChild);
+                
+                // Keep only last 20 items
+                while (feedbackList.children.length > 20) {
+                    feedbackList.removeChild(feedbackList.lastChild);
+                }
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+            
+            send(command) {
+                if (this.ws && this.connected) {
+                    this.ws.send(JSON.stringify(command));
+                } else {
+                    this.addFeedback('Not connected to robot', 'error');
+                    this.showNotification('Not connected to robot', 'error');
+                }
+            }
+            
+            sendAngle(angle) {
+                this.send({
+                    type: 'angle',
+                    data: { angle: parseFloat(angle) }
+                });
+            }
+            
+            sendColor(color) {
+                this.send({
+                    type: 'color',
+                    data: { color: color }
+                });
+            }
+            
+            sendHardware(command) {
+                this.send({
+                    type: 'hardware',
+                    data: { command: command }
+                });
+            }
+            
+            emergencyStop() {
+                this.send({
+                    type: 'emergency_stop',
+                    data: {}
+                });
+                this.showNotification('Emergency stop activated!', 'error');
+            }
+            
+            autoDetect() {
+                const commonUrls = [
+                    'ws://localhost:8766',
+                    'ws://127.0.0.1:8766',
+                    'ws://192.168.1.100:8766',
+                    'ws://192.168.1.101:8766',
+                    'ws://192.168.1.102:8766',
+                    'ws://192.168.0.100:8766',
+                    'ws://192.168.0.101:8766',
+                    'ws://192.168.0.102:8766'
+                ];
+                
+                this.showNotification('Auto-detecting robot...', 'info');
+                this.addFeedback('Starting auto-detection...', 'info');
+                
+                const tryUrl = (index) => {
+                    if (index >= commonUrls.length) {
+                        this.showNotification('No robot found', 'error');
+                        return;
+                    }
+                    
+                    const url = commonUrls[index];
+                    this.addFeedback(`Trying ${url}...`, 'info');
+                    
+                    const testWs = new WebSocket(url);
+                    
+                    testWs.onopen = () => {
+                        testWs.close();
+                        document.getElementById('wsUrl').value = url;
+                        this.showNotification(`Found robot at ${url}`, 'success');
+                        this.connect();
+                    };
+                    
+                    testWs.onerror = () => {
+                        setTimeout(() => tryUrl(index + 1), 500);
+                    };
+                };
+                
+                tryUrl(0);
+            }
+            
+            setupEventListeners() {
+                const angleSlider = document.getElementById('angleSlider');
+                const angleValue = document.getElementById('angleValue');
+                
+                angleSlider.addEventListener('input', (e) => {
+                    const angle = parseFloat(e.target.value);
+                    angleValue.textContent = `${angle.toFixed(1)} rad`;
+                    this.sendAngle(angle);
+                });
+                
+                // Enter key to connect
+                document.getElementById('wsUrl').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.connect();
+                    }
+                });
+            }
+            
+            setupKeyboardControl() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT') return;
+                    
+                    switch (e.key) {
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.setAngle(-0.5);
+                            break;
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            this.setAngle(0.5);
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            this.setAngle(0.0);
+                            break;
+                        case ' ':
+                            e.preventDefault();
+                            this.emergencyStop();
+                            break;
+                        case 'c':
+                            e.preventDefault();
+                            this.connect();
+                            break;
+                    }
+                });
+            }
+            
+            setupGamepadControl() {
+                let gamepadIndex = -1;
+                
+                window.addEventListener('gamepadconnected', (e) => {
+                    gamepadIndex = e.gamepad.index;
+                    this.addFeedback(`Gamepad connected: ${e.gamepad.id}`, 'success');
+                    this.showNotification('Gamepad connected', 'success');
+                });
+                
+                const gamepadLoop = () => {
+                    if (gamepadIndex >= 0) {
+                        const gamepad = navigator.getGamepads()[gamepadIndex];
+                        if (gamepad) {
+                            // Left stick X-axis for head control
+                            const leftX = gamepad.axes[0];
+                            if (Math.abs(leftX) > 0.1) {
+                                this.sendAngle(leftX * 1.5);
+                            }
+                            
+                            // Emergency stop on any button
+                            if (gamepad.buttons.some(button => button.pressed)) {
+                                this.emergencyStop();
+                            }
+                        }
+                    }
+                    requestAnimationFrame(gamepadLoop);
+                };
+                
+                gamepadLoop();
+            }
+            
+            setAngle(angle) {
+                const slider = document.getElementById('angleSlider');
+                const angleValue = document.getElementById('angleValue');
+                
+                slider.value = angle;
+                angleValue.textContent = `${angle.toFixed(1)} rad`;
+                this.sendAngle(angle);
+            }
+        }
+        
+        // Global controller instance
+        let controller;
+        
+        // Global functions for HTML buttons
+        function toggleConnection() {
+            if (controller.connected || controller.connecting) {
+                controller.disconnect();
+            } else {
+                controller.connect();
+            }
+        }
+        
+        function autoDetect() {
+            controller.autoDetect();
+        }
+        
+        function setAngle(angle) {
+            controller.setAngle(angle);
+        }
+        
+        function sendColor(color) {
+            controller.sendColor(color);
+        }
+        
+        function sendHardware(command) {
+            controller.sendHardware(command);
+        }
+        
+        function emergencyStop() {
+            controller.emergencyStop();
+        }
+        
+        // Initialize controller when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            controller = new CORIRemoteController();
+        });
+    </script>
+</body>
+</html>

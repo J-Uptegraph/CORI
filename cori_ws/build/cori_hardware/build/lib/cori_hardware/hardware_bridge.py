@@ -89,6 +89,21 @@ class CORIHardwareBridge(Node):
                     self.send_command("1")  # Send again in case first was missed
                     time.sleep(1)
                     self.get_logger().info("📟 Sent Gazebo mode command to ESP32")
+                    
+                    # Send servo test sequence to verify hardware
+                    time.sleep(2)
+                    self.get_logger().info("🔧 Testing servo with center position...")
+                    self.send_command("ANGLE:0.000")  # Center position
+                    time.sleep(2)
+                    self.get_logger().info("🔧 Testing servo with left position...")
+                    self.send_command("ANGLE:-0.500")  # Left position
+                    time.sleep(2)
+                    self.get_logger().info("🔧 Testing servo with right position...")
+                    self.send_command("ANGLE:0.500")  # Right position
+                    time.sleep(2)
+                    self.get_logger().info("🔧 Returning servo to center...")
+                    self.send_command("ANGLE:0.000")  # Back to center
+                    self.get_logger().info("✅ Servo test sequence complete - check for physical movement!")
                     return
                 except serial.SerialException as e:
                     self.get_logger().debug(f"Failed to connect to {port}: {e}")
@@ -170,7 +185,9 @@ class CORIHardwareBridge(Node):
                 # Convert radians to degrees for ESP32
                 angle_deg = math.degrees(angle)
                 
-                self.get_logger().info(f"🎯 Head command: {angle:.3f} rad ({angle_deg:.1f}°) - ignoring, waiting for color command")
+                # Send angle command directly to ESP32
+                self.send_command(f"ANGLE:{angle:.3f}")
+                self.get_logger().info(f"🎯 Head command: {angle:.3f} rad ({angle_deg:.1f}°) → ESP32")
                 
         except Exception as e:
             self.get_logger().error(f"❌ Head command callback error: {e}")

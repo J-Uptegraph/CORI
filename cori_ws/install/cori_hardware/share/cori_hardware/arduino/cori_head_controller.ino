@@ -24,8 +24,8 @@
   Servo tiltServo;
 
   // Pin definitions for ESP32
-  const int PAN_SERVO_PIN = 12;   // GPIO12 - Left/Right movement
-  const int TILT_SERVO_PIN = 14;  // GPIO14 - Up/Down movement (for nodding)
+  const int PAN_SERVO_PIN = 13;   // GPIO13 - Left/Right movement
+  const int TILT_SERVO_PIN = 12;  // GPIO12 - Up/Down movement (for nodding)
   const int LED_PIN = 2;          // Built-in LED on GPIO2
 
   // Servo calibration (for 5V operation)
@@ -86,9 +86,9 @@
     ESP32PWM::allocateTimer(2);
     ESP32PWM::allocateTimer(3);
 
-    // Attach servos to pins
-    panServo.attach(PAN_SERVO_PIN);
-    tiltServo.attach(TILT_SERVO_PIN);
+    // Attach servos to pins with 5V pulse width configuration
+    panServo.attach(PAN_SERVO_PIN, PULSE_MIN_5V, PULSE_MAX_5V);
+    tiltServo.attach(TILT_SERVO_PIN, PULSE_MIN_5V, PULSE_MAX_5V);
 
     // Initialize LED
     pinMode(LED_PIN, OUTPUT);
@@ -561,6 +561,8 @@
       for (int i = 0; i <= steps; i++) {
         int currentAngle = fromAngle + (i * direction);
         panServo.write(currentAngle);
+        Serial.print("SERVO:PAN:");
+        Serial.println(currentAngle);
         delay(stepDelay);
       }
       delay(100); // Short settling time

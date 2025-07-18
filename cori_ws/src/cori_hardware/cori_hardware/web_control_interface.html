@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORI Real-time Control</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.connected {
+            background: #44ff44;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .control-panel h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .angle-control {
+            margin-bottom: 20px;
+        }
+        
+        .angle-slider {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        .angle-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .color-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .color-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .hardware-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .control-btn.emergency {
+            background: #ff4444;
+        }
+        
+        .control-btn.emergency:hover {
+            background: #ff6666;
+        }
+        
+        .feedback {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .feedback h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .feedback-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        .latency-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #44ff44;
+        }
+        
+        .gamepad-hint {
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .hardware-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 CORI Real-time Control</h1>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="connectionStatus"></div>
+                <span id="connectionText">Disconnected</span>
+            </div>
+            <div class="status-item">
+                <span class="latency-display" id="latencyDisplay">-- ms</span>
+            </div>
+            <div class="status-item">
+                <span id="commandCount">Commands: 0</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-panel">
+                <h3>🎯 Angle Control</h3>
+                <div class="angle-control">
+                    <label>Head Angle: <span id="angleValue">0.0</span> rad</label>
+                    <input type="range" class="angle-slider" id="angleSlider" 
+                           min="-1.8" max="1.8" step="0.1" value="0">
+                </div>
+                
+                <h3>🎨 Color Commands</h3>
+                <div class="color-grid">
+                    <button class="color-btn" style="background: #ff4444;" onclick="sendColor('red')">Red</button>
+                    <button class="color-btn" style="background: #ff8844;" onclick="sendColor('orange')">Orange</button>
+                    <button class="color-btn" style="background: #ffff44;" onclick="sendColor('yellow')">Yellow</button>
+                    <button class="color-btn" style="background: #44ff44;" onclick="sendColor('green')">Green</button>
+                    <button class="color-btn" style="background: #4444ff;" onclick="sendColor('blue')">Blue</button>
+                    <button class="color-btn" style="background: #8844ff;" onclick="sendColor('purple')">Purple</button>
+                    <button class="color-btn" style="background: #888888;" onclick="sendColor('grey')">Grey</button>
+                    <button class="color-btn" style="background: #222222;" onclick="sendColor('black')">Black</button>
+                    <button class="color-btn" style="background: #ffffff; color: #333;" onclick="sendColor('white')">White</button>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <h3>⚙️ Hardware Control</h3>
+                <div class="hardware-controls">
+                    <button class="control-btn" onclick="sendHardware('STATUS')">Status</button>
+                    <button class="control-btn" onclick="sendHardware('RESET')">Reset</button>
+                    <button class="control-btn" onclick="sendHardware('HOME')">Home</button>
+                    <button class="control-btn" onclick="sendHardware('CALIBRATE')">Calibrate</button>
+                    <button class="control-btn emergency" onclick="emergencyStop()">🚨 EMERGENCY STOP</button>
+                </div>
+            </div>
+            
+            <div class="feedback">
+                <h3>📡 System Feedback</h3>
+                <div id="feedbackList"></div>
+            </div>
+        </div>
+        
+        <div class="gamepad-hint">
+            💡 Use keyboard arrows (←→) or gamepad for real-time control
+        </div>
+    </div>
+
+    <script>
+        class CORIController {
+            constructor() {
+                this.ws = null;
+                this.connected = false;
+                this.commandCount = 0;
+                this.connect();
+                this.setupEventListeners();
+                this.setupKeyboardControl();
+                this.setupGamepadControl();
+            }
+            
+            connect() {
+                try {
+                    this.ws = new WebSocket('ws://localhost:8765');
+                    
+                    this.ws.onopen = () => {
+                        this.connected = true;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Connected to CORI', 'success');
+                    };
+                    
+                    this.ws.onmessage = (event) => {
+                        const message = JSON.parse(event.data);
+                        this.handleMessage(message);
+                    };
+                    
+                    this.ws.onclose = () => {
+                        this.connected = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Disconnected from CORI', 'error');
+                        // Attempt reconnection after 2 seconds
+                        setTimeout(() => this.connect(), 2000);
+                    };
+                    
+                    this.ws.onerror = (error) => {
+                        this.addFeedback(`WebSocket error: ${error}`, 'error');
+                    };
+                    
+                } catch (error) {
+                    this.addFeedback(`Connection error: ${error}`, 'error');
+                    setTimeout(() => this.connect(), 2000);
+                }
+            }
+            
+            updateConnectionStatus() {
+                const statusDot = document.getElementById('connectionStatus');
+                const statusText = document.getElementById('connectionText');
+                
+                if (this.connected) {
+                    statusDot.classList.add('connected');
+                    statusText.textContent = 'Connected';
+                } else {
+                    statusDot.classList.remove('connected');
+                    statusText.textContent = 'Disconnected';
+                }
+            }
+            
+            handleMessage(message) {
+                switch (message.type) {
+                    case 'feedback':
+                        this.handleFeedback(message.data);
+                        break;
+                    case 'status':
+                        this.addFeedback(`Hardware: ${message.data}`, 'info');
+                        break;
+                    case 'error':
+                        this.addFeedback(`Error: ${message.data}`, 'error');
+                        break;
+                    case 'welcome':
+                        this.addFeedback(message.data, 'success');
+                        break;
+                }
+            }
+            
+            handleFeedback(data) {
+                document.getElementById('latencyDisplay').textContent = `${data.processing_time_ms} ms`;
+                document.getElementById('commandCount').textContent = `Commands: ${data.command_count}`;
+                this.addFeedback(`${data.command} executed in ${data.processing_time_ms}ms`, 'info');
+            }
+            
+            addFeedback(message, type = 'info') {
+                const feedbackList = document.getElementById('feedbackList');
+                const item = document.createElement('div');
+                item.className = 'feedback-item';
+                
+                const timestamp = new Date().toLocaleTimeString();
+                item.innerHTML = `<span style="opacity: 0.7;">${timestamp}</span> ${message}`;
+                
+                feedbackList.insertBefore(item, feedbackList.firstChild);
+                
+                // Keep only last 10 items
+                while (feedbackList.children.length > 10) {
+                    feedbackList.removeChild(feedbackList.lastChild);
+                }
+            }
+            
+            send(command) {
+                if (this.ws && this.connected) {
+                    this.ws.send(JSON.stringify(command));
+                } else {
+                    this.addFeedback('Not connected to CORI', 'error');
+                }
+            }
+            
+            sendAngle(angle) {
+                this.send({
+                    type: 'angle',
+                    data: { angle: parseFloat(angle) }
+                });
+            }
+            
+            sendColor(color) {
+                this.send({
+                    type: 'color',
+                    data: { color: color }
+                });
+            }
+            
+            sendHardware(command) {
+                this.send({
+                    type: 'hardware',
+                    data: { command: command }
+                });
+            }
+            
+            emergencyStop() {
+                this.send({
+                    type: 'emergency_stop',
+                    data: {}
+                });
+            }
+            
+            setupEventListeners() {
+                const angleSlider = document.getElementById('angleSlider');
+                const angleValue = document.getElementById('angleValue');
+                
+                angleSlider.addEventListener('input', (e) => {
+                    const angle = parseFloat(e.target.value);
+                    angleValue.textContent = angle.toFixed(1);
+                    this.sendAngle(angle);
+                });
+            }
+            
+            setupKeyboardControl() {
+                document.addEventListener('keydown', (e) => {
+                    switch (e.key) {
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.sendAngle(-0.5);
+                            break;
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            this.sendAngle(0.5);
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            this.sendAngle(0.0);
+                            break;
+                        case ' ':
+                            e.preventDefault();
+                            this.emergencyStop();
+                            break;
+                    }
+                });
+            }
+            
+            setupGamepadControl() {
+                let gamepadIndex = -1;
+                
+                window.addEventListener('gamepadconnected', (e) => {
+                    gamepadIndex = e.gamepad.index;
+                    this.addFeedback(`Gamepad connected: ${e.gamepad.id}`, 'success');
+                });
+                
+                const gamepadLoop = () => {
+                    if (gamepadIndex >= 0) {
+                        const gamepad = navigator.getGamepads()[gamepadIndex];
+                        if (gamepad) {
+                            // Left stick X-axis for head control
+                            const leftX = gamepad.axes[0];
+                            if (Math.abs(leftX) > 0.1) {
+                                this.sendAngle(leftX * 1.5); // Scale to head range
+                            }
+                            
+                            // Emergency stop on any button
+                            if (gamepad.buttons.some(button => button.pressed)) {
+                                this.emergencyStop();
+                            }
+                        }
+                    }
+                    requestAnimationFrame(gamepadLoop);
+                };
+                
+                gamepadLoop();
+            }
+        }
+        
+        // Global functions for HTML buttons
+        let controller;
+        
+        function sendColor(color) {
+            controller.sendColor(color);
+        }
+        
+        function sendHardware(command) {
+            controller.sendHardware(command);
+        }
+        
+        function emergencyStop() {
+            controller.emergencyStop();
+        }
+        
+        // Initialize controller when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            controller = new CORIController();
+        });
+    </script>
+</body>
+</html>

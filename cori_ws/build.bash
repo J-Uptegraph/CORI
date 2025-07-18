@@ -274,6 +274,57 @@ run_laundry_assistant() {
     python3 cori_simulator.py
 }
 
+# Run real-time web control
+run_realtime_web_control() {
+    cleanup_processes "real-time web control"
+    trap 'cleanup_processes "real-time web control"; exit 0' SIGINT
+    echo "🌐 CORI REAL-TIME WEB CONTROL + HARDWARE"
+    echo "======================================="
+    echo "🎯 Features:"
+    echo "   🚀 Zero-latency WebSocket control"
+    echo "   🎮 Web interface with gamepad support"
+    echo "   📡 Direct ROS topic publishing"
+    echo "   🔄 Real-time feedback and status"
+    echo "   🎨 Color and angle control"
+    echo "   🛑 Emergency stop capability"
+    echo "   🔗 ESP32 hardware bridge for real servos"
+    echo "   🤖 Controls both simulation AND physical robot"
+    echo ""
+    echo "🌐 Web Interface: http://localhost:8091/index.html"
+    echo "🔌 WebSocket API: ws://localhost:8766"
+    echo "🔌 ESP32 Hardware: Auto-detected and connected"
+    echo ""
+    read -p "🚀 Start real-time web control? [y/N]: " confirm
+    [[ ! $confirm =~ ^[Yy]$ ]] && { echo "👋 Cancelled"; exit 0; }
+    
+    # Fix lib directory structure for ROS2 launch
+    mkdir -p install/cori_hardware/lib/cori_hardware
+    cp install/cori_hardware/bin/* install/cori_hardware/lib/cori_hardware/ 2>/dev/null || true
+    
+    echo "🔌 Starting real-time web control system..."
+    source install/setup.bash
+    ros2 launch cori_hardware realtime_web_control.launch.py &
+    CONTROL_PID=$!
+    sleep 5
+    
+    echo "🎮 Starting Gazebo simulation..."
+    start_gazebo GAZEBO_PID
+    echo "🔍 Verifying Gazebo startup..."
+    sleep 5
+    
+    echo "✅ System ready!"
+    echo "🌐 Open your browser to: http://localhost:8091/index.html"
+    echo "🎮 Use keyboard arrows, mouse, or gamepad for control"
+    echo "🛑 Press Ctrl+C to stop"
+    echo ""
+    
+    while true; do 
+        sleep 1
+        [ -z "$(ps -p $CONTROL_PID -o pid=)" ] && { echo "❌ Web control stopped"; cleanup_processes "real-time web control"; exit 1; }
+        [ -z "$(ps -p $GAZEBO_PID -o pid=)" ] && { echo "❌ Gazebo stopped"; cleanup_processes "real-time web control"; exit 1; }
+    done
+}
+
 # Run full system
 run_full_system() {
     [ $(check_file "$INTEGRATION_PATH"; echo $?) -ne 0 ] && exit 1
@@ -338,9 +389,10 @@ main() {
         "4) 📷 Webcam Color Detection"
         "5) 🦾 Manual Robot Control"
         "6) 🔗 ESP32 Hardware Bridge"
-        "7) 🧹 Kill All ROS Processes"
-        "8) 🔗 System Test"
-        "9) 🚪 Exit"
+        "7) 🌐 Real-time Web Control"
+        "8) 🧹 Kill All ROS Processes"
+        "9) 🔗 System Test"
+        "10) 🚪 Exit"
     )
 
     for item in "${menu_items[@]}"; do
@@ -353,7 +405,7 @@ main() {
     echo "╰"$(printf '─%.0s' $(seq 1 $menu_inner_width))"╯"
     # --- End of Menu Box ---
 
-    read -p "Enter choice [1-9]: " choice
+    read -p "Enter choice [1-10]: " choice
     case $choice in
         1) run_full_system ;;
         2) run_gazebo_only ;;
@@ -361,9 +413,10 @@ main() {
         4) run_webcam_color ;;
         5) run_manual_control ;;
         6) run_hardware_bridge ;;
-        7) kill_all_processes ;;
-        8) run_system_test ;;
-        9) echo "👋 Exiting..."; exit 0 ;;
+        7) run_realtime_web_control ;;
+        8) kill_all_processes ;;
+        9) run_system_test ;;
+        10) echo "👋 Exiting..."; exit 0 ;;
         *) echo "❌ Invalid choice"; exit 1 ;;
     esac
     echo "🏁 CORI system ended."

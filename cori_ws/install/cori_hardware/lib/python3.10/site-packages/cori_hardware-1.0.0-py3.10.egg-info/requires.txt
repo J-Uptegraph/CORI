@@ -1,1 +1,2 @@
 setuptools
+websockets>=10.0

@@ -1,0 +1,26 @@
+[0.756s] Invoking command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_hardware': PYTHONPATH=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/cori_hardware build --build-base /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build install --record /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/install.log --single-version-externally-managed install_data
+[1.000s] running egg_info
+[1.001s] writing ../../build/cori_hardware/cori_hardware.egg-info/PKG-INFO
+[1.001s] writing dependency_links to ../../build/cori_hardware/cori_hardware.egg-info/dependency_links.txt
+[1.001s] writing entry points to ../../build/cori_hardware/cori_hardware.egg-info/entry_points.txt
+[1.002s] writing requirements to ../../build/cori_hardware/cori_hardware.egg-info/requires.txt
+[1.002s] writing top-level names to ../../build/cori_hardware/cori_hardware.egg-info/top_level.txt
+[1.004s] reading manifest file '../../build/cori_hardware/cori_hardware.egg-info/SOURCES.txt'
+[1.005s] writing manifest file '../../build/cori_hardware/cori_hardware.egg-info/SOURCES.txt'
+[1.005s] running build
+[1.005s] running build_py
+[1.005s] running install
+[1.005s] running install_lib
+[1.008s] running install_data
+[1.008s] copying launch/realtime_web_control.launch.py -> /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/share/cori_hardware/launch
+[1.008s] running install_egg_info
+[1.010s] removing '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware-1.0.0-py3.10.egg-info' (and everything under it)
+[1.010s] Copying ../../build/cori_hardware/cori_hardware.egg-info to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages/cori_hardware-1.0.0-py3.10.egg-info
+[1.010s] running install_scripts
+[1.028s] Installing arduino_bridge script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[1.028s] Installing hardware_bridge script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[1.028s] Installing hardware_integration script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[1.028s] Installing hardware_test script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[1.028s] Installing realtime_web_control script to /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/bin
+[1.028s] writing list of installed files to '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/install.log'
+[1.050s] Invoked command in '/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/src/cori_hardware' returned '0': PYTHONPATH=/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/install/cori_hardware/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/cori_hardware build --build-base /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/build install --record /home/juptegraph/Workspaces/Robotics/Projects/CORI/cori_ws/build/cori_hardware/install.log --single-version-externally-managed install_data
