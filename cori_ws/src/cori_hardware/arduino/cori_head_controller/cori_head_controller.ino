@@ -25,7 +25,7 @@
 
   // Pin definitions for ESP32
   const int PAN_SERVO_PIN = 13;   // GPIO13 - Left/Right movement
-  const int TILT_SERVO_PIN = 12;  // GPIO12 - Up/Down movement (for nodding)
+  const int TILT_SERVO_PIN = 14;  // GPIO14 - Up/Down movement (for nodding)
   const int LED_PIN = 2;          // Built-in LED on GPIO2
 
   // Servo calibration (for 5V operation)

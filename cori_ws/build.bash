@@ -81,6 +81,67 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
         return 0
     }
 
+    # Get public IP address
+    get_public_ip() {
+        local public_ip=""
+        
+        # Try multiple methods to get public IP
+        public_ip=$(curl -s --connect-timeout 5 ifconfig.me 2>/dev/null) || \
+        public_ip=$(curl -s --connect-timeout 5 ipinfo.io/ip 2>/dev/null) || \
+        public_ip=$(curl -s --connect-timeout 5 icanhazip.com 2>/dev/null) || \
+        public_ip=$(dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null)
+        
+        # Validate that we got an IPv4 address (not IPv6)
+        if [[ ! $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            public_ip=""
+        fi
+        
+        # Fallback to local IPv4 if public IP detection fails
+        if [ -z "$public_ip" ]; then
+            public_ip=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+            if [ -z "$public_ip" ]; then
+                public_ip=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+            fi
+        fi
+        
+        echo "$public_ip"
+    }
+
+    # Display URL information
+    display_urls() {
+        # Get IPv4 addresses only - multiple methods to ensure IPv4
+        local local_ip=""
+        
+        # Method 1: Use ip route to get primary IPv4
+        local_ip=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        
+        # Method 2: Use ip addr to get IPv4 from active interface
+        if [ -z "$local_ip" ]; then
+            local_ip=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+        fi
+        
+        # Method 3: Use hostname with strict IPv4 filtering
+        if [ -z "$local_ip" ]; then
+            local_ip=$(hostname -I | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+        fi
+        
+        local public_ip=$(get_public_ip)
+        
+        echo "🌐 CORI Web Interface URLs:"
+        echo "📍 Local:  http://localhost:8091/index.html"
+        
+        if [ -n "$local_ip" ]; then
+            echo "🏠 LAN:    http://$local_ip:8091/index.html"
+        fi
+        
+        if [ -n "$public_ip" ] && [ "$public_ip" != "$local_ip" ]; then
+            echo "🌍 Public: http://$public_ip:8091/index.html"
+            echo "⚠️  Note: Ensure port 8091 is open for external access"
+        fi
+        
+        echo ""
+    }
+
     # Clean up processes
     cleanup_processes() {
         local mode="$1"
@@ -316,9 +377,10 @@ run_realtime_web_control() {
     echo "   🔗 ESP32 hardware bridge for real servos"
     echo "   🤖 Controls both simulation AND physical robot"
     echo ""
-    echo "🌐 Web Interface: http://localhost:8091/index.html"
     echo "🔌 WebSocket API: ws://localhost:8767"
     echo "🔌 ESP32 Hardware: Auto-detected and connected"
+    echo ""
+    display_urls
     echo ""
     read -p "🚀 Start real-time web control? [y/N]: " confirm
     [[ ! $confirm =~ ^[Yy]$ ]] && { echo "👋 Cancelled"; exit 0; }
@@ -339,10 +401,17 @@ run_realtime_web_control() {
     sleep 5
     
     echo "✅ System ready!"
-    echo "🌐 Open your browser to: http://localhost:8091/index.html"
+    display_urls
     echo "🎮 Use keyboard arrows, mouse, or gamepad for control"
     echo "🛑 Press Ctrl+C to stop"
     echo ""
+    
+    # Wait for servo testing to complete, then display final URLs
+    echo "⏳ Waiting for servo testing to complete..."
+    sleep 10
+    echo ""
+    echo "🎯 All testing complete! System is fully operational."
+    display_urls
     
     while true; do 
         sleep 1

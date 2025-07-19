@@ -29,6 +29,7 @@ class CORIRealtimeWebControl(Node):
             10
         )
         
+        
         self.hardware_publisher = self.create_publisher(
             String,
             '/cori/hardware_command',
@@ -53,7 +54,7 @@ class CORIRealtimeWebControl(Node):
         self.command_count = 0
         self.last_command_time = time.time()
         
-        # Color angle mappings for quick lookup
+        # Color angle mappings for quick lookup (correct for Gazebo)
         self.color_angles = {
             'red': -0.62,
             'orange': -0.45,
@@ -132,6 +133,11 @@ class CORIRealtimeWebControl(Node):
                 angle = float(data.get('angle', 0.0))
                 self.publish_angle(angle)
                 
+                
+            elif command_type == 'tilt':
+                angle = float(data.get('angle', 0.0))
+                self.publish_tilt_command(angle)
+                
             elif command_type == 'color':
                 color = data.get('color', 'green').lower()
                 self.publish_color(color)
@@ -186,6 +192,14 @@ class CORIRealtimeWebControl(Node):
         msg.data = angle
         self.joint_publisher.publish(msg)
         self.get_logger().info(f"📡 Publishing angle: {angle:.3f} rad to /model/cori/joint/head_joint/cmd_pos")
+    
+    def publish_tilt_command(self, angle: float):
+        """Publish tilt command as TILT command for GPIO14"""
+        command = f"TILT:{angle:.3f}"
+        msg = String()
+        msg.data = command
+        self.hardware_publisher.publish(msg)
+        self.get_logger().info(f"📡 Publishing TILT command: {angle:.3f} rad → ESP32 GPIO14")
     
     def publish_color(self, color: str):
         """Publish color command and convert to angle"""

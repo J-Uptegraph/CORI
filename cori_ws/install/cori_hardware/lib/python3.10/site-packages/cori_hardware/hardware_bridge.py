@@ -53,6 +53,14 @@ class CORIHardwareBridge(Node):
             10
         )
         
+        # ROS subscriptions - listen to direct hardware commands
+        self.hardware_cmd_subscription = self.create_subscription(
+            String,
+            '/cori/hardware_command',
+            self.hardware_command_callback,
+            10
+        )
+        
         # Track current head positions
         self.current_head_angle = 0.0  # Pan angle
         self.current_tilt_angle = 0.0  # Tilt angle
@@ -129,7 +137,9 @@ class CORIHardwareBridge(Node):
             try:
                 self.serial_port.write(f"{command}\n".encode())
                 self.serial_port.flush()  # Ensure data is sent immediately
-                self.get_logger().info(f"📤 Sent to ESP32: '{command}'")
+                # Only log important commands, not routine angle updates
+                if not command.startswith("ANGLE:") or abs(float(command.split(":")[1])) > 0.1:
+                    self.get_logger().info(f"📤 Sent to ESP32: '{command}'")
             except Exception as e:
                 self.get_logger().error(f"❌ Send error: {e}")
                 # Try to reconnect if sending fails
@@ -146,7 +156,13 @@ class CORIHardwareBridge(Node):
                     if self.serial_port.in_waiting > 0:  # Only read if data available
                         response = self.serial_port.readline().decode().strip()
                         if response:
-                            self.get_logger().info(f"📥 ESP32 says: {response}")
+                            # Filter out routine status messages to reduce spam
+                            if (not response.startswith("GLE:") and 
+                                not response.startswith("STATUS:") and
+                                not response.startswith("OK") and
+                                len(response) > 3):  # Only log meaningful messages
+                                self.get_logger().info(f"📥 ESP32 says: {response}")
+                            
                             # Check if ESP32 is asking for menu choice
                             if "Enter choice" in response or "1. Gazebo Mode" in response:
                                 self.get_logger().warn("⚠️ ESP32 is in MENU mode, sending '1' to enter Gazebo mode")
@@ -177,7 +193,9 @@ class CORIHardwareBridge(Node):
                     
                     # Send angle command to ESP32
                     self.send_command(f"ANGLE:{new_angle:.3f}")
-                    self.get_logger().info(f"🎯 Head angle: {new_angle:.3f} rad")
+                    # Only log significant movements to reduce spam
+                    if abs(new_angle) > 0.1:
+                        self.get_logger().info(f"🎯 Head angle: {new_angle:.3f} rad")
                     
         except Exception as e:
             self.get_logger().error(f"❌ Joint callback error: {e}")
@@ -196,7 +214,9 @@ class CORIHardwareBridge(Node):
                 
                 # Send angle command directly to ESP32
                 self.send_command(f"ANGLE:{angle:.3f}")
-                self.get_logger().info(f"🎯 Head command: {angle:.3f} rad ({angle_deg:.1f}°) → ESP32")
+                # Only log significant movements to reduce spam
+                if abs(angle) > 0.1:
+                    self.get_logger().info(f"🎯 Head command: {angle:.3f} rad ({angle_deg:.1f}°) → ESP32")
                 
         except Exception as e:
             self.get_logger().error(f"❌ Head command callback error: {e}")
@@ -219,6 +239,19 @@ class CORIHardwareBridge(Node):
                 
         except Exception as e:
             self.get_logger().error(f"❌ Tilt command callback error: {e}")
+    
+    def hardware_command_callback(self, msg):
+        """Handle direct hardware commands from web interface"""
+        try:
+            command = msg.data.strip()
+            self.get_logger().warn(f"🔥 DEBUG: Hardware bridge received: '{command}'")
+            
+            # Send command directly to ESP32
+            self.send_command(command)
+            self.get_logger().warn(f"🔥 DEBUG: Sent to ESP32: '{command}'")
+            
+        except Exception as e:
+            self.get_logger().error(f"❌ Hardware command callback error: {e}")
     
     def color_callback(self, msg):
         """Handle color detection from vision system"""

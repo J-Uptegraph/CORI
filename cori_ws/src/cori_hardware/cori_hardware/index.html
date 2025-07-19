@@ -2,438 +2,505 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORI Remote Control</title>
-    <meta name="description" content="Real-time remote control interface for CORI robot - Zero latency WebSocket control">
-    <meta name="keywords" content="robotics, real-time control, WebSocket, ROS2, CORI">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>1X Robot Character Software Engineer Demo</title>
+    <meta name="description" content="Mobile-friendly real-time remote control for CORI robot">
     <meta name="author" content="Johnathan Uptegraph">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2322c55e%22/></svg>">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #64942d 0%, #141414 100%);
-            color: #f6f6f6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
             min-height: 100vh;
-            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
         
         .header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(45deg, #73aa2d, #64942d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+            letter-spacing: -0.01em;
         }
         
         .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin: 0;
         }
         
-        .connection-panel {
-            background: rgba(20, 20, 20, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(115, 170, 45, 0.5);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        /* Demo Section Styles */
+        .demo-section {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            text-align: center;
         }
         
-        .connection-form {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 15px;
-            align-items: center;
+        .demo-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 24px;
+            line-height: 1.2;
         }
         
-        .connection-form input {
-            padding: 12px 15px;
+        .demo-button {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #000000;
             border: none;
-            border-radius: 8px;
-            background: rgba(20, 20, 20, 0.8);
-            color: #f6f6f6;
-            font-size: 16px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(115, 170, 45, 0.6);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .connection-form input::placeholder {
-            color: rgba(246, 246, 246, 0.6);
-        }
-        
-        .connection-form button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(45deg, #73aa2d, #64942d);
-            color: #f6f6f6;
-            font-weight: bold;
+            padding: 16px 48px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 16px;
-            box-shadow: 0 2px 8px rgba(115, 170, 45, 0.3);
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
         }
         
-        .connection-form button:hover {
+        .demo-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(115, 170, 45, 0.5);
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
         }
         
-        .connection-form button:disabled {
-            opacity: 0.5;
+        .demo-button:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
         
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(20, 20, 20, 0.9);
-            padding: 15px 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-            border: 1px solid rgba(115, 170, 45, 0.2);
+        .demo-result {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
         }
         
-        .status-item {
+        .demo-result h3 {
+            color: #22c55e;
+            font-size: 1.4rem;
+            margin: 0;
+        }
+        
+        .status-bar {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 500;
+            justify-content: space-between;
+            border: 1px solid #333;
         }
         
         .status-dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #ff4444;
+            background: #ef4444;
+            margin-right: 8px;
             animation: pulse 2s infinite;
         }
         
         .status-dot.connected {
-            background: #73aa2d;
-        }
-        
-        .status-dot.connecting {
-            background: #64942d;
+            background: #22c55e;
         }
         
         @keyframes pulse {
-            0% { opacity: 1; }
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-            100% { opacity: 1; }
         }
         
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .control-panel {
-            background: rgba(20, 20, 20, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(115, 170, 45, 0.5);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .control-panel h3 {
+        .control-section {
+            background: #111111;
+            border-radius: 8px;
+            padding: 24px;
             margin-bottom: 20px;
-            color: #73aa2d;
-            font-size: 1.3em;
-            font-weight: bold;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333333;
+            transition: all 0.3s ease;
         }
         
-        .angle-control {
-            margin-bottom: 25px;
+        .control-section:hover {
+            border-color: rgba(34, 197, 94, 0.4);
         }
         
-        .angle-display {
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #4ade80;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 8px;
         }
         
-        .angle-value {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #73aa2d;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-        
-        .angle-slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: rgba(20, 20, 20, 0.8);
-            outline: none;
-            margin: 15px 0;
-            cursor: pointer;
-            border: 1px solid rgba(115, 170, 45, 0.3);
-        }
-        
-        .angle-slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #73aa2d, #64942d);
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        
-        .angle-slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #73aa2d, #64942d);
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        
-        .preset-buttons {
+        /* Sliders Grid */
+        .sliders-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .preset-btn {
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            background: rgba(20, 20, 20, 0.6);
-            color: #f6f6f6;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-            border: 1px solid rgba(115, 170, 45, 0.3);
-        }
-        
-        .preset-btn:hover {
-            background: rgba(115, 170, 45, 0.3);
-            transform: translateY(-1px);
-        }
-        
-        .color-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .color-btn {
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            font-size: 14px;
-        }
-        
-        .color-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .color-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .hardware-controls {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
-        .control-btn {
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(20, 20, 20, 0.6);
-            color: #f6f6f6;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            font-size: 14px;
-            border: 1px solid rgba(115, 170, 45, 0.3);
-        }
-        
-        .control-btn:hover {
-            background: rgba(115, 170, 45, 0.3);
-            transform: translateY(-1px);
-        }
-        
-        .control-btn.emergency {
-            background: linear-gradient(45deg, #ff4444, #ff6666);
-            grid-column: 1 / -1;
-            font-size: 16px;
-        }
-        
-        .control-btn.emergency:hover {
-            background: linear-gradient(45deg, #ff6666, #ff8888);
-        }
-        
-        .feedback-panel {
-            background: rgba(20, 20, 20, 0.8);
-            border-radius: 15px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(115, 170, 45, 0.3);
-        }
-        
-        .feedback-panel h3 {
-            margin-bottom: 15px;
-            color: #73aa2d;
-            font-size: 1.3em;
-        }
-        
-        .feedback-list {
-            max-height: 200px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(115, 170, 45, 0.3) transparent;
-        }
-        
-        .feedback-item {
-            margin-bottom: 10px;
-            padding: 10px;
-            background: rgba(20, 20, 20, 0.6);
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-        
-        .feedback-item.success {
-            border-left: 4px solid #73aa2d;
-        }
-        
-        .feedback-item.error {
-            border-left: 4px solid #ff4444;
-        }
-        
-        .feedback-item.info {
-            border-left: 4px solid #64942d;
-        }
-        
-        .latency-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #73aa2d;
-        }
-        
-        .help-section {
-            margin-top: 30px;
-            background: rgba(20, 20, 20, 0.8);
-            border-radius: 15px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(115, 170, 45, 0.3);
-        }
-        
-        .help-section h3 {
-            color: #73aa2d;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-        
-        .help-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .help-item {
-            background: rgba(20, 20, 20, 0.6);
-            padding: 15px;
-            border-radius: 8px;
-        }
-        
-        .help-item h4 {
-            color: #73aa2d;
-            margin-bottom: 8px;
-        }
-        
-        .help-item p {
-            font-size: 14px;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(20, 20, 20, 0.9);
-            color: #f6f6f6;
-            padding: 15px 20px;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(115, 170, 45, 0.3);
-            z-index: 1000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
         }
         
         @media (max-width: 768px) {
-            .connection-form {
+            .sliders-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+        
+        .slider-container {
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333333;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+        }
+        
+        .slider-value {
+            font-weight: 600;
+            color: #4ade80;
+            font-size: 1rem;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 48px;
+            border-radius: 8px;
+            background: #0a0a0a;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            border: 1px solid #555555;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .slider:hover {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+        
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            border: 3px solid #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .slider::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+        
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(12px, 3vw, 20px);
+            margin-bottom: 24px;
+        }
+        
+        /* Color Grid - horizontal line */
+        .color-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 1vw;
+            margin-bottom: 24px;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .color-grid .action-btn {
+            flex: 1;
+            min-width: 0;
+            font-size: clamp(0.6rem, 1.5vw, 0.9rem);
+            padding: clamp(8px, 2vw, 12px) clamp(2px, 1vw, 8px);
+            white-space: nowrap;
+        }
+        
+        /* Vertical Slider (Up/Down) */
+        .vertical-slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 24px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+        }
+        
+        .vertical-slider {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 60px;
+            height: 300px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            position: relative;
+        }
+        
+        .vertical-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            border: 3px solid #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .vertical-slider::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+        }
+        
+        .vertical-slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+        
+        .vertical-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 300px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+        
+        .action-btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: #e5e5e5;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #333;
+            min-height: 48px;
+        }
+        
+        .action-btn:hover {
+            background: #2a2a2a;
+            border-color: #22c55e;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.98);
+            background: #333;
+        }
+        
+        .action-btn.emergency {
+            background: linear-gradient(45deg, #ef4444, #dc2626) !important;
+            color: white !important;
+            grid-column: 1 / -1;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid #dc2626 !important;
+        }
+        
+        .action-btn.emergency:hover {
+            background: linear-gradient(45deg, #dc2626, #b91c1c) !important;
+            border-color: #b91c1c !important;
+        }
+        
+        .color-btn {
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.05) !important;
+            border-color: rgba(255, 255, 255, 0.4) !important;
+        }
+        
+        /* Connection Section */
+        .connection-section {
+            margin-bottom: 24px;
+        }
+        
+        .connection-input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            border: 1px solid #555;
+        }
+        
+        .connection-input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .connect-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: #000000;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .connect-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .connect-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Feedback */
+        .feedback {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        
+        .feedback-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feedback-item.success {
+            color: #4ade80;
+        }
+        
+        .feedback-item.error {
+            color: #ef4444;
+        }
+        
+        .feedback-item.info {
+            color: #60a5fa;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
             }
             
-            .status-bar {
-                flex-direction: column;
-                align-items: flex-start;
+            .header h1 {
+                font-size: 2rem;
             }
             
-            .controls {
-                grid-template-columns: 1fr;
+            .control-section {
+                padding: 20px;
             }
             
-            .hardware-controls {
-                grid-template-columns: 1fr;
+            .slider {
+                height: 44px;
             }
             
-            .help-grid {
-                grid-template-columns: 1fr;
+            .slider::-webkit-slider-thumb {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .vertical-slider {
+                height: 240px;
+                width: 50px;
+            }
+            
+            .vertical-labels {
+                height: 240px;
+            }
+        }
+        
+        /* Landscape Mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .vertical-slider {
+                height: 180px;
+                width: 45px;
+            }
+            
+            .vertical-labels {
+                height: 180px;
+            }
+            
+            .container {
+                padding: 12px;
             }
         }
     </style>
@@ -441,117 +508,113 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🤖 CORI Remote Control</h1>
-            <p>Real-time robot control from anywhere in the world</p>
-        </div>
-        
-        <div class="connection-panel">
-            <div class="connection-form">
-                <input type="text" id="wsUrl" placeholder="WebSocket URL (auto-detected)" value="">
-                <button id="connectBtn" onclick="toggleConnection()">Connect</button>
-                <button id="autoDetectBtn" onclick="autoDetect()">Auto-Detect</button>
-            </div>
+            <h1>CORI WIRELESS ROBOT CONTROLS</h1>
+            <p>Built By Johnathan Uptegraph</p>
         </div>
         
         <div class="status-bar">
-            <div class="status-item">
+            <div style="display: flex; align-items: center;">
                 <div class="status-dot" id="connectionStatus"></div>
                 <span id="connectionText">Disconnected</span>
             </div>
-            <div class="status-item">
-                <span class="latency-display" id="latencyDisplay">-- ms</span>
-            </div>
-            <div class="status-item">
-                <span id="commandCount">Commands: 0</span>
-            </div>
-            <div class="status-item">
-                <span id="robotStatus">Robot: Unknown</span>
+            <span id="latencyDisplay">-- ms</span>
+        </div>
+        
+        <!-- 1X Demo Section -->
+        <div class="demo-section" id="demoSection">
+            <div class="demo-content">
+                <h2>Should Johnathan Join the 1X Team?</h2>
+                <button class="demo-button" id="demoButton" onclick="shouldJohnJoin1X()">
+                    ASK CORI
+                </button>
+                <div class="demo-result" id="demoResult" style="display: none;">
+                    <h3>Johnathan and CORI both think that would be a fantastic idea!</h3>
+                </div>
             </div>
         </div>
         
-        <div class="controls">
-            <div class="control-panel">
-                <h3>🎯 Angle Control</h3>
-                <div class="angle-control">
-                    <div class="angle-display">
-                        <label>Head Angle:</label>
-                        <span class="angle-value" id="angleValue">0.0 rad</span>
+        <div class="control-section connection-section">
+            <div class="section-title">
+                Connection
+            </div>
+            <input type="text" class="connection-input" id="wsUrl" placeholder="WebSocket URL (auto-detected)">
+            <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">
+                Head Control
+            </div>
+            
+            <div class="sliders-grid">
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Horizontal: LEFT ← → RIGHT</span>
+                        <span class="slider-value" id="horizontalValue">0.0°</span>
                     </div>
-                    <input type="range" class="angle-slider" id="angleSlider" 
-                           min="-1.8" max="1.8" step="0.1" value="0">
-                    <div class="preset-buttons">
-                        <button class="preset-btn" onclick="setAngle(-1.5)">← Far Left</button>
-                        <button class="preset-btn" onclick="setAngle(0)">⬆ Center</button>
-                        <button class="preset-btn" onclick="setAngle(1.5)">→ Far Right</button>
-                    </div>
+                    <input type="range" class="slider" id="horizontalSlider" 
+                           min="-1.047" max="1.047" step="0.01" value="0">
                 </div>
                 
-                <h3>🎨 Color Commands</h3>
-                <div class="color-grid">
-                    <button class="color-btn" style="background: #ff4444;" onclick="sendColor('red')">Red</button>
-                    <button class="color-btn" style="background: #ff8844;" onclick="sendColor('orange')">Orange</button>
-                    <button class="color-btn" style="background: #ffff44;" onclick="sendColor('yellow')">Yellow</button>
-                    <button class="color-btn" style="background: #44ff44;" onclick="sendColor('green')">Green</button>
-                    <button class="color-btn" style="background: #4444ff;" onclick="sendColor('blue')">Blue</button>
-                    <button class="color-btn" style="background: #8844ff;" onclick="sendColor('purple')">Purple</button>
-                    <button class="color-btn" style="background: #888888;" onclick="sendColor('grey')">Grey</button>
-                    <button class="color-btn" style="background: #222222;" onclick="sendColor('black')">Black</button>
-                    <button class="color-btn" style="background: #ffffff; color: #333;" onclick="sendColor('white')">White</button>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Vertical: DOWN ← → UP</span>
+                        <span class="slider-value" id="verticalValue">0.0°</span>
+                    </div>
+                    <input type="range" class="slider" id="verticalSlider" 
+                           min="-0.8" max="0.8" step="0.01" value="0">
                 </div>
             </div>
             
-            <div class="control-panel">
-                <h3>⚙️ Hardware Control</h3>
-                <div class="hardware-controls">
-                    <button class="control-btn" onclick="sendHardware('STATUS')">📊 Status</button>
-                    <button class="control-btn" onclick="sendHardware('RESET')">🔄 Reset</button>
-                    <button class="control-btn" onclick="sendHardware('HOME')">🏠 Home</button>
-                    <button class="control-btn" onclick="sendHardware('CALIBRATE')">🎯 Calibrate</button>
-                    <button class="control-btn emergency" onclick="emergencyStop()">🚨 EMERGENCY STOP</button>
-                </div>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">
+                Gazebo Color Commands
+            </div>
+            <div class="color-grid">
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #000000, #374151); color: white;" onclick="sendColor('black')">Black</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #6b7280, #9ca3af); color: white;" onclick="sendColor('grey')">Grey</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white;" onclick="sendColor('purple')">Purple</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #3b82f6, #2563eb); color: white;" onclick="sendColor('blue')">Blue</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #22c55e, #16a34a); color: white;" onclick="sendColor('green')">Green</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #ffd700, #ffed4e); color: black;" onclick="sendColor('yellow')">Yellow</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #ff8c00, #ff6347); color: white;" onclick="sendColor('orange')">Orange</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white;" onclick="sendColor('red')">Red</button>
             </div>
         </div>
         
-        <div class="feedback-panel">
-            <h3>📡 System Feedback</h3>
-            <div class="feedback-list" id="feedbackList"></div>
+        <div class="control-section">
+            <div class="section-title">
+                Quick Actions
+            </div>
+            <div class="quick-actions">
+                <button class="action-btn" onclick="incrementPosition(0.1)">Left</button>
+                <button class="action-btn" onclick="setPosition(0)">Center</button>
+                <button class="action-btn" onclick="incrementPosition(-0.1)">Right</button>
+                <button class="action-btn" onclick="incrementTiltPosition(-0.1)">Look Down</button>
+                <button class="action-btn" onclick="setTiltPosition(0)">Tilt Center</button>
+                <button class="action-btn" onclick="incrementTiltPosition(0.1)">Look Up</button>
+                <button class="action-btn emergency" onclick="emergencyStop()">EMERGENCY STOP</button>
+            </div>
         </div>
         
-        <div class="help-section">
-            <h3>💡 Control Methods</h3>
-            <div class="help-grid">
-                <div class="help-item">
-                    <h4>⌨️ Keyboard</h4>
-                    <p>Use arrow keys: ← → for movement, ↑ for center, Space for emergency stop</p>
-                </div>
-                <div class="help-item">
-                    <h4>🎮 Gamepad</h4>
-                    <p>Left stick X-axis controls head movement, any button triggers emergency stop</p>
-                </div>
-                <div class="help-item">
-                    <h4>🖱️ Mouse/Touch</h4>
-                    <p>Click and drag the angle slider, or tap color/control buttons</p>
-                </div>
-                <div class="help-item">
-                    <h4>📱 Mobile</h4>
-                    <p>Optimized for touch controls on smartphones and tablets</p>
-                </div>
+        
+        <div class="control-section">
+            <div class="section-title">
+                System Feedback
             </div>
+            <div class="feedback" id="feedbackList"></div>
         </div>
     </div>
 
-    <div class="notification" id="notification"></div>
-
     <script>
-        class CORIRemoteController {
+        class CORIController {
             constructor() {
                 this.ws = null;
                 this.connected = false;
                 this.connecting = false;
-                this.commandCount = 0;
                 this.setupEventListeners();
-                this.setupKeyboardControl();
-                this.setupGamepadControl();
                 this.loadSettings();
             }
             
@@ -560,7 +623,6 @@
                 if (savedUrl) {
                     document.getElementById('wsUrl').value = savedUrl;
                 } else {
-                    // Auto-detect WebSocket URL based on current page host
                     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                     const host = window.location.hostname;
                     const autoUrl = `${protocol}//${host}:8767`;
@@ -568,9 +630,53 @@
                 }
             }
             
-            saveSettings() {
-                const url = document.getElementById('wsUrl').value;
-                localStorage.setItem('cori-websocket-url', url);
+            setupEventListeners() {
+                // Horizontal slider - visual feedback on input, command on release
+                const horizontalSlider = document.getElementById('horizontalSlider');
+                const horizontalValue = document.getElementById('horizontalValue');
+                
+                // Update display in real-time
+                horizontalSlider.addEventListener('input', (e) => {
+                    const angle = parseFloat(e.target.value);
+                    horizontalValue.textContent = `${(angle * 57.2958).toFixed(1)}°`;
+                });
+                
+                // Send command only on mouse release
+                horizontalSlider.addEventListener('change', (e) => {
+                    if (!this.connected) {
+                        this.addFeedback('Please connect to CORI first', 'error');
+                        return;
+                    }
+                    const angle = -parseFloat(e.target.value);  // Negate for correct direction
+                    this.sendAngle(angle);
+                });
+                
+                // Vertical slider - visual feedback on input, command on release
+                const verticalSlider = document.getElementById('verticalSlider');
+                const verticalValue = document.getElementById('verticalValue');
+                
+                // Update display in real-time
+                verticalSlider.addEventListener('input', (e) => {
+                    const angle = parseFloat(e.target.value);
+                    verticalValue.textContent = `${(angle * 57.2958).toFixed(1)}°`;
+                });
+                
+                // Send command only on mouse release
+                verticalSlider.addEventListener('change', (e) => {
+                    if (!this.connected) {
+                        this.addFeedback('Please connect to CORI first', 'error');
+                        return;
+                    }
+                    const angle = -parseFloat(e.target.value);  // Negate for correct direction
+                    this.sendTiltAngle(angle);
+                });
+                
+                // Connection input
+                document.getElementById('wsUrl').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.connect();
+                    }
+                });
             }
             
             connect() {
@@ -578,13 +684,13 @@
                 
                 const url = document.getElementById('wsUrl').value.trim();
                 if (!url) {
-                    this.showNotification('Please enter a WebSocket URL', 'error');
+                    this.addFeedback('Please enter a WebSocket URL', 'error');
                     return;
                 }
                 
                 this.connecting = true;
                 this.updateConnectionStatus();
-                this.saveSettings();
+                localStorage.setItem('cori-websocket-url', url);
                 
                 try {
                     this.ws = new WebSocket(url);
@@ -594,7 +700,6 @@
                         this.connecting = false;
                         this.updateConnectionStatus();
                         this.addFeedback('Connected to CORI robot', 'success');
-                        this.showNotification('Connected successfully!', 'success');
                     };
                     
                     this.ws.onmessage = (event) => {
@@ -607,31 +712,18 @@
                         this.connecting = false;
                         this.updateConnectionStatus();
                         this.addFeedback('Disconnected from CORI robot', 'error');
-                        this.showNotification('Connection lost', 'error');
                     };
                     
-                    this.ws.onerror = (error) => {
+                    this.ws.onerror = () => {
                         this.connecting = false;
                         this.updateConnectionStatus();
-                        this.addFeedback(`Connection error: ${error.message || 'Unknown error'}`, 'error');
-                        this.showNotification('Connection failed', 'error');
+                        this.addFeedback('Connection failed', 'error');
                     };
-                    
-                    // Connection timeout
-                    setTimeout(() => {
-                        if (this.connecting) {
-                            this.ws.close();
-                            this.connecting = false;
-                            this.updateConnectionStatus();
-                            this.showNotification('Connection timeout', 'error');
-                        }
-                    }, 10000);
                     
                 } catch (error) {
                     this.connecting = false;
                     this.updateConnectionStatus();
                     this.addFeedback(`Connection error: ${error.message}`, 'error');
-                    this.showNotification('Invalid WebSocket URL', 'error');
                 }
             }
             
@@ -649,14 +741,13 @@
                 const statusText = document.getElementById('connectionText');
                 const connectBtn = document.getElementById('connectBtn');
                 
-                statusDot.classList.remove('connected', 'connecting');
+                statusDot.classList.remove('connected');
                 
                 if (this.connected) {
                     statusDot.classList.add('connected');
                     statusText.textContent = 'Connected';
                     connectBtn.textContent = 'Disconnect';
                 } else if (this.connecting) {
-                    statusDot.classList.add('connecting');
                     statusText.textContent = 'Connecting...';
                     connectBtn.textContent = 'Cancel';
                 } else {
@@ -668,46 +759,19 @@
             handleMessage(message) {
                 switch (message.type) {
                     case 'feedback':
-                        this.handleFeedback(message.data);
+                        document.getElementById('latencyDisplay').textContent = `${message.data.processing_time_ms} ms`;
+                        this.addFeedback(`Command executed in ${message.data.processing_time_ms}ms`, 'info');
                         break;
                     case 'status':
                         this.addFeedback(`Robot: ${message.data}`, 'info');
-                        document.getElementById('robotStatus').textContent = `Robot: ${message.data}`;
                         break;
                     case 'error':
                         this.addFeedback(`Error: ${message.data}`, 'error');
-                        this.showNotification(message.data, 'error');
                         break;
                     case 'welcome':
                         this.addFeedback(message.data, 'success');
                         break;
-                    case 'command_executed':
-                        this.handleCommandFeedback(message);
-                        break;
                 }
-            }
-            
-            handleFeedback(data) {
-                document.getElementById('latencyDisplay').textContent = `${data.processing_time_ms} ms`;
-                document.getElementById('commandCount').textContent = `Commands: ${data.command_count}`;
-                this.addFeedback(`${data.command} executed in ${data.processing_time_ms}ms`, 'info');
-            }
-            
-            handleCommandFeedback(message) {
-                const data = message;
-                document.getElementById('latencyDisplay').textContent = `${data.processing_time_ms} ms`;
-                document.getElementById('commandCount').textContent = `Commands: ${data.command_count}`;
-                
-                // Show command details for multi-user awareness
-                let commandDetails = `${data.command}`;
-                if (data.command_data && data.command_data.angle !== undefined) {
-                    commandDetails += `: ${data.command_data.angle.toFixed(2)} rad`;
-                }
-                if (data.command_data && data.command_data.color) {
-                    commandDetails += `: ${data.command_data.color}`;
-                }
-                
-                this.addFeedback(`🎮 ${commandDetails} (${data.processing_time_ms}ms) [${data.total_users} users]`, 'info');
             }
             
             addFeedback(message, type = 'info') {
@@ -716,25 +780,14 @@
                 item.className = `feedback-item ${type}`;
                 
                 const timestamp = new Date().toLocaleTimeString();
-                item.innerHTML = `<span style="opacity: 0.7;">${timestamp}</span> ${message}`;
+                item.innerHTML = `<small>${timestamp}</small> ${message}`;
                 
                 feedbackList.insertBefore(item, feedbackList.firstChild);
                 
-                // Keep only last 20 items
-                while (feedbackList.children.length > 20) {
+                // Keep only last 10 items
+                while (feedbackList.children.length > 10) {
                     feedbackList.removeChild(feedbackList.lastChild);
                 }
-            }
-            
-            showNotification(message, type = 'info') {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 4000);
             }
             
             send(command) {
@@ -742,7 +795,6 @@
                     this.ws.send(JSON.stringify(command));
                 } else {
                     this.addFeedback('Not connected to robot', 'error');
-                    this.showNotification('Not connected to robot', 'error');
                 }
             }
             
@@ -751,6 +803,15 @@
                     type: 'angle',
                     data: { angle: parseFloat(angle) }
                 });
+                this.addFeedback(`Head horizontal: ${(angle * 57.2958).toFixed(1)}°`, 'info');
+            }
+            
+            sendTiltAngle(angle) {
+                this.send({
+                    type: 'tilt',
+                    data: { angle: parseFloat(angle) }
+                });
+                this.addFeedback(`Head vertical: ${(angle * 57.2958).toFixed(1)}°`, 'info');
             }
             
             sendColor(color) {
@@ -758,13 +819,7 @@
                     type: 'color',
                     data: { color: color }
                 });
-            }
-            
-            sendHardware(command) {
-                this.send({
-                    type: 'hardware',
-                    data: { command: command }
-                });
+                this.addFeedback(`🎨 Color command: ${color}`, 'info');
             }
             
             emergencyStop() {
@@ -772,168 +827,14 @@
                     type: 'emergency_stop',
                     data: {}
                 });
-                this.showNotification('Emergency stop activated!', 'error');
-            }
-            
-            autoDetect() {
-                // Use the same host as the web page is served from
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const host = window.location.hostname;
-                const primaryUrl = `${protocol}//${host}:8767`;
-                
-                const commonUrls = [
-                    primaryUrl,  // Try the page host first
-                    'ws://localhost:8767',
-                    'ws://127.0.0.1:8767',
-                    'ws://192.168.1.100:8767',
-                    'ws://192.168.1.101:8767',
-                    'ws://192.168.1.102:8767',
-                    'ws://192.168.0.100:8767',
-                    'ws://192.168.0.101:8767',
-                    'ws://192.168.0.102:8767'
-                ];
-                
-                this.showNotification('Auto-detecting robot...', 'info');
-                this.addFeedback('Starting auto-detection...', 'info');
-                
-                const tryUrl = (index) => {
-                    if (index >= commonUrls.length) {
-                        this.showNotification('No robot found', 'error');
-                        return;
-                    }
-                    
-                    const url = commonUrls[index];
-                    this.addFeedback(`Trying ${url}...`, 'info');
-                    
-                    const testWs = new WebSocket(url);
-                    
-                    testWs.onopen = () => {
-                        testWs.close();
-                        document.getElementById('wsUrl').value = url;
-                        this.showNotification(`Found robot at ${url}`, 'success');
-                        this.connect();
-                    };
-                    
-                    testWs.onerror = () => {
-                        setTimeout(() => tryUrl(index + 1), 500);
-                    };
-                };
-                
-                tryUrl(0);
-            }
-            
-            setupEventListeners() {
-                const angleSlider = document.getElementById('angleSlider');
-                const angleValue = document.getElementById('angleValue');
-                
-                angleSlider.addEventListener('input', (e) => {
-                    const angle = parseFloat(e.target.value);
-                    angleValue.textContent = `${angle.toFixed(1)} rad`;
-                });
-                
-                angleSlider.addEventListener('change', (e) => {
-                    const angle = parseFloat(e.target.value);
-                    this.sendAngle(angle);
-                });
-                
-                // Enter key to connect
-                document.getElementById('wsUrl').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        this.connect();
-                    }
-                });
-            }
-            
-            setupKeyboardControl() {
-                document.addEventListener('keydown', (e) => {
-                    if (e.target.tagName === 'INPUT') return;
-                    
-                    switch (e.key) {
-                        case 'ArrowLeft':
-                            e.preventDefault();
-                            this.setAngle(-0.5);
-                            break;
-                        case 'ArrowRight':
-                            e.preventDefault();
-                            this.setAngle(0.5);
-                            break;
-                        case 'ArrowUp':
-                        case 'ArrowDown':
-                            e.preventDefault();
-                            this.setAngle(0.0);
-                            break;
-                        case ' ':
-                            e.preventDefault();
-                            this.emergencyStop();
-                            break;
-                        case 'c':
-                            e.preventDefault();
-                            this.connect();
-                            break;
-                    }
-                });
-            }
-            
-            setupGamepadControl() {
-                let gamepadIndex = -1;
-                let lastAngle = 0;
-                let lastSendTime = 0;
-                const SEND_INTERVAL = 100; // Only send every 100ms
-                const DEADZONE = 0.1;
-                const ANGLE_THRESHOLD = 0.05; // Only send if angle changed by more than 0.05 rad
-                
-                window.addEventListener('gamepadconnected', (e) => {
-                    gamepadIndex = e.gamepad.index;
-                    this.addFeedback(`Gamepad connected: ${e.gamepad.id}`, 'success');
-                    this.showNotification('Gamepad connected', 'success');
-                });
-                
-                const gamepadLoop = () => {
-                    if (gamepadIndex >= 0) {
-                        const gamepad = navigator.getGamepads()[gamepadIndex];
-                        if (gamepad) {
-                            const now = Date.now();
-                            
-                            // Left stick X-axis for head control
-                            const leftX = gamepad.axes[0];
-                            if (Math.abs(leftX) > DEADZONE) {
-                                const newAngle = leftX * 1.5;
-                                
-                                // Only send if enough time has passed AND angle changed significantly
-                                if (now - lastSendTime > SEND_INTERVAL && 
-                                    Math.abs(newAngle - lastAngle) > ANGLE_THRESHOLD) {
-                                    this.sendAngle(newAngle);
-                                    lastAngle = newAngle;
-                                    lastSendTime = now;
-                                }
-                            }
-                            
-                            // Emergency stop on any button
-                            if (gamepad.buttons.some(button => button.pressed)) {
-                                this.emergencyStop();
-                            }
-                        }
-                    }
-                    requestAnimationFrame(gamepadLoop);
-                };
-                
-                gamepadLoop();
-            }
-            
-            setAngle(angle) {
-                const slider = document.getElementById('angleSlider');
-                const angleValue = document.getElementById('angleValue');
-                
-                slider.value = angle;
-                angleValue.textContent = `${angle.toFixed(1)} rad`;
-                this.sendAngle(angle);
+                this.addFeedback('EMERGENCY STOP ACTIVATED!', 'error');
             }
         }
         
         // Global controller instance
         let controller;
         
-        // Global functions for HTML buttons
+        // Global functions
         function toggleConnection() {
             if (controller.connected || controller.connecting) {
                 controller.disconnect();
@@ -942,29 +843,221 @@
             }
         }
         
-        function autoDetect() {
-            controller.autoDetect();
+        function setPosition(horizontal) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const horizontalSlider = document.getElementById('horizontalSlider');
+            const horizontalValue = document.getElementById('horizontalValue');
+            
+            // Set slider to direct value
+            horizontalSlider.value = -horizontal;  // Negate for slider display
+            horizontalValue.textContent = `${(-horizontal * 57.2958).toFixed(1)}°`;
+            
+            controller.sendAngle(horizontal);
         }
         
-        function setAngle(angle) {
-            controller.setAngle(angle);
+        function incrementPosition(increment) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const horizontalSlider = document.getElementById('horizontalSlider');
+            const currentValue = parseFloat(horizontalSlider.value);
+            const newValue = Math.max(-1.047, Math.min(1.047, currentValue + increment));
+            
+            horizontalSlider.value = newValue;
+            document.getElementById('horizontalValue').textContent = `${(newValue * 57.2958).toFixed(1)}°`;
+            
+            controller.sendAngle(-newValue);  // Negate for correct direction
         }
         
-        function sendColor(color) {
-            controller.sendColor(color);
+        function setTiltPosition(tilt) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const verticalSlider = document.getElementById('verticalSlider');
+            const verticalValue = document.getElementById('verticalValue');
+            
+            verticalSlider.value = -tilt;  // Negate for slider display
+            verticalValue.textContent = `${(-tilt * 57.2958).toFixed(1)}°`;
+            
+            controller.sendTiltAngle(tilt);
         }
         
-        function sendHardware(command) {
-            controller.sendHardware(command);
+        function incrementTiltPosition(increment) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const verticalSlider = document.getElementById('verticalSlider');
+            const currentValue = parseFloat(verticalSlider.value);
+            const newValue = Math.max(-0.8, Math.min(0.8, currentValue + increment));
+            
+            verticalSlider.value = newValue;
+            document.getElementById('verticalValue').textContent = `${(newValue * 57.2958).toFixed(1)}°`;
+            
+            controller.sendTiltAngle(-newValue);  // Negate for correct direction
         }
         
         function emergencyStop() {
             controller.emergencyStop();
         }
         
+        function sendColor(color) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            // Reset vertical position to 0 when selecting colors
+            setTiltPosition(0);
+            
+            // Send color command
+            controller.sendColor(color);
+        }
+        
+        function shouldJohnJoin1X() {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            // Disable button during animation
+            const demoButton = document.getElementById('demoButton');
+            demoButton.disabled = true;
+            demoButton.textContent = 'THINKING...';
+            
+            controller.addFeedback('CORI is pondering the question...', 'info');
+            
+            // Professional pondering sequence
+            // Step 1: Start at zero position
+            setTimeout(() => {
+                controller.sendAngle(0);
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, 100);
+            
+            // Step 2: Tilt head back (thinking pose)
+            setTimeout(() => {
+                controller.sendTiltAngle(-0.3);
+                updateSliders(0, -0.3);
+                controller.addFeedback('Tilting head back in contemplation...', 'info');
+            }, 800);
+            
+            // Step 3: Look off to the left (pondering)
+            setTimeout(() => {
+                controller.sendAngle(-0.8);
+                updateSliders(-0.8, -0.3);
+                controller.addFeedback('Looking left, deep in thought...', 'info');
+            }, 2000);
+            
+            // Step 4: Rotate back to center
+            setTimeout(() => {
+                controller.sendAngle(0);
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+                controller.addFeedback('Returning to center position...', 'info');
+            }, 3500);
+            
+            // Step 5: Pause
+            setTimeout(() => {
+                controller.addFeedback('Processing decision...', 'info');
+            }, 4500);
+            
+            // ENTHUSIASTIC NODDING SEQUENCE - 5 fast nods!
+            let nodTime = 5500;
+            const nodInterval = 300; // Faster nods
+            
+            // Nod 1
+            setTimeout(() => {
+                controller.sendTiltAngle(0.6);
+                updateSliders(0, 0.6);
+                controller.addFeedback('Enthusiastic nod 1!', 'success');
+            }, nodTime);
+            
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, nodTime + 150);
+            nodTime += nodInterval;
+            
+            // Nod 2
+            setTimeout(() => {
+                controller.sendTiltAngle(0.6);
+                updateSliders(0, 0.6);
+                controller.addFeedback('Enthusiastic nod 2!', 'success');
+            }, nodTime);
+            
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, nodTime + 150);
+            nodTime += nodInterval;
+            
+            // Nod 3
+            setTimeout(() => {
+                controller.sendTiltAngle(0.6);
+                updateSliders(0, 0.6);
+                controller.addFeedback('Enthusiastic nod 3!', 'success');
+            }, nodTime);
+            
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, nodTime + 150);
+            nodTime += nodInterval;
+            
+            // Nod 4
+            setTimeout(() => {
+                controller.sendTiltAngle(0.6);
+                updateSliders(0, 0.6);
+                controller.addFeedback('Enthusiastic nod 4!', 'success');
+            }, nodTime);
+            
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, nodTime + 150);
+            nodTime += nodInterval;
+            
+            // Nod 5 - Final nod
+            setTimeout(() => {
+                controller.sendTiltAngle(0.6);
+                updateSliders(0, 0.6);
+                controller.addFeedback('Final enthusiastic nod!', 'success');
+            }, nodTime);
+            
+            // Final return to center
+            setTimeout(() => {
+                controller.sendAngle(0);
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+                controller.addFeedback('Decision complete! ABSOLUTELY YES!', 'success');
+                
+                // Show result and update button
+                document.getElementById('demoResult').style.display = 'block';
+                demoButton.textContent = 'ASK AGAIN';
+                demoButton.disabled = false;
+            }, nodTime + 400);
+        }
+        
+        function updateSliders(horizontal, vertical) {
+            document.getElementById('horizontalSlider').value = -horizontal;  // Negate for slider display
+            document.getElementById('verticalSlider').value = -vertical;      // Negate for slider display
+            document.getElementById('horizontalValue').textContent = `${(-horizontal * 57.2958).toFixed(1)}°`;
+            document.getElementById('verticalValue').textContent = `${(-vertical * 57.2958).toFixed(1)}°`;
+        }
+        
         // Initialize controller when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            controller = new CORIRemoteController();
+            controller = new CORIController();
         });
     </script>
 </body>

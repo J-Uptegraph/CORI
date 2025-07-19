@@ -1,0 +1,16 @@
+[Unit]
+Description=CORI Robot Status Publisher
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/juptegraph/Workspaces/Robotics/Projects/CORI
+ExecStart=/usr/bin/python3 /home/juptegraph/Workspaces/Robotics/Projects/CORI/robot_status_publisher.py
+Restart=always
+RestartSec=10
+Environment=GITHUB_TOKEN=your_github_token_here
+
+[Install]
+WantedBy=multi-user.target
