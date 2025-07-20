@@ -520,6 +520,14 @@
             <span id="latencyDisplay">-- ms</span>
         </div>
         
+        <div class="control-section connection-section">
+            <div class="section-title">
+                Connection
+            </div>
+            <input type="text" class="connection-input" id="wsUrl" placeholder="ws://[YOUR_PUBLIC_IP]:8767 for internet access">
+            <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
+        </div>
+        
         <!-- 1X Demo Section -->
         <div class="demo-section" id="demoSection">
             <div class="demo-content">
@@ -531,14 +539,6 @@
                     <h3>Johnathan and CORI both think that would be a fantastic idea!</h3>
                 </div>
             </div>
-        </div>
-        
-        <div class="control-section connection-section">
-            <div class="section-title">
-                Connection
-            </div>
-            <input type="text" class="connection-input" id="wsUrl" placeholder="WebSocket URL (auto-detected)">
-            <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
         </div>
         
         <div class="control-section">
@@ -589,12 +589,12 @@
                 Quick Actions
             </div>
             <div class="quick-actions">
-                <button class="action-btn" onclick="incrementPosition(0.1)">Left</button>
+                <button class="action-btn" onclick="incrementPosition(-0.1)">Left</button>
                 <button class="action-btn" onclick="setPosition(0)">Center</button>
-                <button class="action-btn" onclick="incrementPosition(-0.1)">Right</button>
-                <button class="action-btn" onclick="incrementTiltPosition(-0.1)">Look Down</button>
+                <button class="action-btn" onclick="incrementPosition(0.1)">Right</button>
+                <button class="action-btn" onclick="incrementTiltPosition(-0.076)">Look Down</button>
                 <button class="action-btn" onclick="setTiltPosition(0)">Tilt Center</button>
-                <button class="action-btn" onclick="incrementTiltPosition(0.1)">Look Up</button>
+                <button class="action-btn" onclick="incrementTiltPosition(0.076)">Look Up</button>
                 <button class="action-btn emergency" onclick="emergencyStop()">EMERGENCY STOP</button>
             </div>
         </div>
@@ -623,6 +623,7 @@
                 if (savedUrl) {
                     document.getElementById('wsUrl').value = savedUrl;
                 } else {
+                    // Auto-detect host for internet access
                     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                     const host = window.location.hostname;
                     const autoUrl = `${protocol}//${host}:8767`;
@@ -856,7 +857,7 @@
             horizontalSlider.value = -horizontal;  // Negate for slider display
             horizontalValue.textContent = `${(-horizontal * 57.2958).toFixed(1)}°`;
             
-            controller.sendAngle(horizontal);
+            controller.sendAngle(-horizontal);  // Negate for backwards servo
         }
         
         function incrementPosition(increment) {
@@ -872,7 +873,7 @@
             horizontalSlider.value = newValue;
             document.getElementById('horizontalValue').textContent = `${(newValue * 57.2958).toFixed(1)}°`;
             
-            controller.sendAngle(-newValue);  // Negate for correct direction
+            controller.sendAngle(-newValue);  // Negate because slider value is display-negated
         }
         
         function setTiltPosition(tilt) {
@@ -887,7 +888,7 @@
             verticalSlider.value = -tilt;  // Negate for slider display
             verticalValue.textContent = `${(-tilt * 57.2958).toFixed(1)}°`;
             
-            controller.sendTiltAngle(tilt);
+            controller.sendTiltAngle(-tilt);  // Negate for backwards servo
         }
         
         function incrementTiltPosition(increment) {
@@ -903,7 +904,7 @@
             verticalSlider.value = newValue;
             document.getElementById('verticalValue').textContent = `${(newValue * 57.2958).toFixed(1)}°`;
             
-            controller.sendTiltAngle(-newValue);  // Negate for correct direction
+            controller.sendTiltAngle(-newValue);  // Negate because slider value is display-negated
         }
         
         function emergencyStop() {
@@ -915,9 +916,6 @@
                 controller.addFeedback('Please connect to CORI first', 'error');
                 return;
             }
-            
-            // Reset vertical position to 0 when selecting colors
-            setTiltPosition(0);
             
             // Send color command
             controller.sendColor(color);
@@ -934,112 +932,81 @@
             demoButton.disabled = true;
             demoButton.textContent = 'THINKING...';
             
-            controller.addFeedback('CORI is pondering the question...', 'info');
+            controller.addFeedback('CORI is thinking about this amazing opportunity...', 'info');
             
-            // Professional pondering sequence
-            // Step 1: Start at zero position
-            setTimeout(() => {
-                controller.sendAngle(0);
-                controller.sendTiltAngle(0);
-                updateSliders(0, 0);
-            }, 100);
-            
-            // Step 2: Tilt head back (thinking pose)
+            // Human-like thinking sequence with personality!
+            // Step 1: Quick look up (like "hmm, let me think")
             setTimeout(() => {
                 controller.sendTiltAngle(-0.3);
                 updateSliders(0, -0.3);
-                controller.addFeedback('Tilting head back in contemplation...', 'info');
+                controller.addFeedback('Hmm, let me think about this...', 'info');
+            }, 200);
+            
+            // Step 2: Quick glance left (considering options)
+            setTimeout(() => {
+                controller.sendAngle(-0.6);
+                updateSliders(-0.6, -0.3);
+                controller.addFeedback('Weighing the possibilities...', 'info');
             }, 800);
             
-            // Step 3: Look off to the left (pondering)
+            // Step 3: Quick glance right (considering more options) 
             setTimeout(() => {
-                controller.sendAngle(-0.8);
-                updateSliders(-0.8, -0.3);
-                controller.addFeedback('Looking left, deep in thought...', 'info');
+                controller.sendAngle(0.6);
+                updateSliders(0.6, -0.3);
+                controller.addFeedback('On one hand... on the other hand...', 'info');
+            }, 1400);
+            
+            // Step 4: Back to center, head straight - decision time!
+            setTimeout(() => {
+                controller.sendAngle(0);
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+                controller.addFeedback('Wait... the answer is obvious!', 'success');
             }, 2000);
             
-            // Step 4: Rotate back to center
-            setTimeout(() => {
-                controller.sendAngle(0);
-                controller.sendTiltAngle(0);
-                updateSliders(0, 0);
-                controller.addFeedback('Returning to center position...', 'info');
-            }, 3500);
+            // Step 5: ENTHUSIASTIC NODDING SEQUENCE!
+            let nodTime = 2600;
+            const nodInterval = 350; // Human-speed enthusiastic nods
+            const nodAngle = 0.7; // Enthusiastic but not crazy
             
-            // Step 5: Pause
+            // Excited nod 1
             setTimeout(() => {
-                controller.addFeedback('Processing decision...', 'info');
-            }, 4500);
-            
-            // ENTHUSIASTIC NODDING SEQUENCE - 5 fast nods!
-            let nodTime = 5500;
-            const nodInterval = 300; // Faster nods
-            
-            // Nod 1
-            setTimeout(() => {
-                controller.sendTiltAngle(0.6);
-                updateSliders(0, 0.6);
-                controller.addFeedback('Enthusiastic nod 1!', 'success');
+                controller.sendTiltAngle(nodAngle);
+                updateSliders(0, nodAngle);
+                controller.addFeedback('YES!', 'success');
             }, nodTime);
             
             setTimeout(() => {
                 controller.sendTiltAngle(0);
                 updateSliders(0, 0);
-            }, nodTime + 150);
+            }, nodTime + 180);
             nodTime += nodInterval;
             
-            // Nod 2
+            // Excited nod 2
             setTimeout(() => {
-                controller.sendTiltAngle(0.6);
-                updateSliders(0, 0.6);
-                controller.addFeedback('Enthusiastic nod 2!', 'success');
+                controller.sendTiltAngle(nodAngle);
+                updateSliders(0, nodAngle);
+                controller.addFeedback('ABSOLUTELY YES!', 'success');
             }, nodTime);
             
             setTimeout(() => {
                 controller.sendTiltAngle(0);
                 updateSliders(0, 0);
-            }, nodTime + 150);
+            }, nodTime + 180);
             nodTime += nodInterval;
             
-            // Nod 3
+            // Excited nod 3
             setTimeout(() => {
-                controller.sendTiltAngle(0.6);
-                updateSliders(0, 0.6);
-                controller.addFeedback('Enthusiastic nod 3!', 'success');
+                controller.sendTiltAngle(nodAngle);
+                updateSliders(0, nodAngle);
+                controller.addFeedback('HIRE JOHNATHAN NOW!', 'success');
             }, nodTime);
             
+            // Final return with enthusiasm
             setTimeout(() => {
                 controller.sendTiltAngle(0);
                 updateSliders(0, 0);
-            }, nodTime + 150);
-            nodTime += nodInterval;
-            
-            // Nod 4
-            setTimeout(() => {
-                controller.sendTiltAngle(0.6);
-                updateSliders(0, 0.6);
-                controller.addFeedback('Enthusiastic nod 4!', 'success');
-            }, nodTime);
-            
-            setTimeout(() => {
-                controller.sendTiltAngle(0);
-                updateSliders(0, 0);
-            }, nodTime + 150);
-            nodTime += nodInterval;
-            
-            // Nod 5 - Final nod
-            setTimeout(() => {
-                controller.sendTiltAngle(0.6);
-                updateSliders(0, 0.6);
-                controller.addFeedback('Final enthusiastic nod!', 'success');
-            }, nodTime);
-            
-            // Final return to center
-            setTimeout(() => {
-                controller.sendAngle(0);
-                controller.sendTiltAngle(0);
-                updateSliders(0, 0);
-                controller.addFeedback('Decision complete! ABSOLUTELY YES!', 'success');
+                controller.addFeedback('🚀 CORI says: Join 1X immediately! 🚀', 'success');
                 
                 // Show result and update button
                 document.getElementById('demoResult').style.display = 'block';

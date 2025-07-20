@@ -81,30 +81,37 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
         return 0
     }
 
-    # Get public IP address
-    get_public_ip() {
+    # Get public IP addresses (IPv4 and IPv6)
+    get_public_ipv4() {
         local public_ip=""
         
-        # Try multiple methods to get public IP
-        public_ip=$(curl -s --connect-timeout 5 ifconfig.me 2>/dev/null) || \
-        public_ip=$(curl -s --connect-timeout 5 ipinfo.io/ip 2>/dev/null) || \
-        public_ip=$(curl -s --connect-timeout 5 icanhazip.com 2>/dev/null) || \
-        public_ip=$(dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null)
+        # Try multiple methods to get IPv4 public IP (force IPv4)
+        public_ip=$(timeout 3 curl -4 -s ifconfig.me 2>/dev/null) && [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip" && return
+        public_ip=$(timeout 3 curl -4 -s ipinfo.io/ip 2>/dev/null) && [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip" && return
+        public_ip=$(timeout 3 curl -4 -s icanhazip.com 2>/dev/null) && [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip" && return
+        public_ip=$(timeout 3 wget -qO- -4 checkip.amazonaws.com 2>/dev/null | tr -d '\n') && [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip" && return
+        public_ip=$(timeout 3 dig +short myip.opendns.com @resolver1.opendns.com 2>/dev/null) && [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip" && return
         
-        # Validate that we got an IPv4 address (not IPv6)
-        if [[ ! $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            public_ip=""
-        fi
+        # Fallback to local IPv4 
+        public_ip=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip" && return
         
-        # Fallback to local IPv4 if public IP detection fails
-        if [ -z "$public_ip" ]; then
-            public_ip=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-            if [ -z "$public_ip" ]; then
-                public_ip=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
-            fi
-        fi
+        # Final fallback
+        public_ip=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+        [[ $public_ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "$public_ip"
+    }
+    
+    get_public_ipv6() {
+        local public_ipv6=""
         
-        echo "$public_ip"
+        # Try multiple methods to get IPv6 public IP (force IPv6)
+        public_ipv6=$(timeout 3 curl -6 -s ifconfig.me 2>/dev/null) && [[ $public_ipv6 =~ ^[0-9a-fA-F:]+$ ]] && echo "$public_ipv6" && return
+        public_ipv6=$(timeout 3 curl -6 -s ipinfo.io/ip 2>/dev/null) && [[ $public_ipv6 =~ ^[0-9a-fA-F:]+$ ]] && echo "$public_ipv6" && return
+        public_ipv6=$(timeout 3 curl -6 -s icanhazip.com 2>/dev/null) && [[ $public_ipv6 =~ ^[0-9a-fA-F:]+$ ]] && echo "$public_ipv6" && return
+        
+        # Fallback to local IPv6
+        public_ipv6=$(ip -6 addr show | grep 'inet6' | grep 'global' | awk '{print $2}' | cut -d/ -f1 | head -1)
+        [[ $public_ipv6 =~ ^[0-9a-fA-F:]+$ ]] && echo "$public_ipv6"
     }
 
     # Display URL information
@@ -127,18 +134,41 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
         
         local public_ip=$(get_public_ip)
         
-        echo "🌐 CORI Web Interface URLs:"
-        echo "📍 Local:  http://localhost:8091/index.html"
+        echo ""
+        echo "╭────────────────────────────────────────────────────────────────╮"
+        echo "│                    🌐 CORI WEB INTERFACE LINKS                 │"
+        echo "├────────────────────────────────────────────────────────────────┤"
+        echo "│                                                                │"
+        echo "│ 📍 Local:  http://localhost:8091/index.html                   │"
         
         if [ -n "$local_ip" ]; then
-            echo "🏠 LAN:    http://$local_ip:8091/index.html"
+            printf "│ 🏠 LAN:    %-47s │\n" "http://$local_ip:8091/index.html"
         fi
         
         if [ -n "$public_ip" ] && [ "$public_ip" != "$local_ip" ]; then
-            echo "🌍 Public: http://$public_ip:8091/index.html"
-            echo "⚠️  Note: Ensure port 8091 is open for external access"
+            printf "│ 🌍 Public: %-47s │\n" "http://$public_ip:8091/index.html"
+            echo "│                                                                │"
+            echo "│ 🎉 SEND THIS TO YOUR FRIENDS! 🎉                              │"
+            printf "│    👉 %-54s │\n" "http://$public_ip:8091/index.html"
+            echo "│                                                                │"
+            echo "│ 🇳🇴 Norway friends can control CORI!                          │"
+            echo "│ 🇺🇸 Jersey parents can control CORI!                          │"
+            echo "│ 🌍 Anyone worldwide can control CORI!                         │"
+            echo "│                                                                │"
+            printf "│ 📋 Copy & paste this link: %-30s │\n" "$public_ip:8091/index.html"
+            echo "│ ⚠️  Note: Ensure ports 8091 & 8767 are forwarded              │"
+        else
+            echo "│                                                                │"
+            echo "│ ⚠️  Public IP not detected - trying to detect...               │"
+            echo "│                                                                │"
+            if [ -n "$local_ip" ]; then
+                printf "│ 🏠 Try LAN link for now: %-32s │\n" "http://$local_ip:8091/index.html"
+            fi
+            echo "│ 💡 Check internet connection and port forwarding               │"
         fi
         
+        echo "│                                                                │"
+        echo "╰────────────────────────────────────────────────────────────────╯"
         echo ""
     }
 

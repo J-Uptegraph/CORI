@@ -40,14 +40,14 @@
   const int PULSE_MAX_5V = 2000;   // Maximum pulse width for 5V operation (microseconds)
 
   // CORI angle mappings
-  const float ANGLE_BLACK = 0.76;     // Far right
-  const float ANGLE_GREY = 0.62;      // Right
-  const float ANGLE_PURPLE = 0.45;    // Mid-right
-  const float ANGLE_BLUE = 0.23;      // Slight right
+  const float ANGLE_BLACK = 0.76;     // Far right (MATCHES GAZEBO)
+  const float ANGLE_GREY = 0.62;      // Right (MATCHES GAZEBO)
+  const float ANGLE_PURPLE = 0.45;    // Mid-right (MATCHES GAZEBO)
+  const float ANGLE_BLUE = 0.23;      // Slight right (MATCHES GAZEBO)
   const float ANGLE_GREEN = 0.0;      // Center
-  const float ANGLE_YELLOW = -0.23;   // Slight left
-  const float ANGLE_ORANGE = -0.45;   // Mid-left
-  const float ANGLE_RED = -0.62;      // Left
+  const float ANGLE_YELLOW = -0.23;   // Slight left (MATCHES GAZEBO)
+  const float ANGLE_ORANGE = -0.45;   // Mid-left (MATCHES GAZEBO)
+  const float ANGLE_RED = -0.62;      // Left (MATCHES GAZEBO)
 
   // CORI simulation limits
   const float CORI_MIN_ANGLE = -1.8;  // -103 degrees
@@ -68,7 +68,7 @@
   // Mode control
   enum Mode { MENU, GAZEBO, MANUAL, WIFI };
   Mode currentMode = MENU;
-  const int ANGLE_STEP = 30; // Degrees to move in manual mode
+  const int ANGLE_STEP = 5; // Degrees to move in manual mode
 
   // WiFi Configuration
   const char* ssid = "CORI_HEAD_CONTROLLER";
@@ -415,12 +415,12 @@
         currentTiltAngle = constrain(currentTiltAngle + ANGLE_STEP, SERVO_MIN, SERVO_MAX);
         Serial.println("OK:BACK");
       } else if (command == "LEFT") {
-        smoothMove(currentPanAngle, currentPanAngle - ANGLE_STEP);
-        currentPanAngle = constrain(currentPanAngle - ANGLE_STEP, SERVO_MIN, SERVO_MAX);
-        Serial.println("OK:LEFT");
-      } else if (command == "RIGHT") {
         smoothMove(currentPanAngle, currentPanAngle + ANGLE_STEP);
         currentPanAngle = constrain(currentPanAngle + ANGLE_STEP, SERVO_MIN, SERVO_MAX);
+        Serial.println("OK:LEFT");
+      } else if (command == "RIGHT") {
+        smoothMove(currentPanAngle, currentPanAngle - ANGLE_STEP);
+        currentPanAngle = constrain(currentPanAngle - ANGLE_STEP, SERVO_MIN, SERVO_MAX);
         Serial.println("OK:RIGHT");
       } else if (command == "UP") {
         smoothTiltMove(currentTiltAngle, currentTiltAngle - ANGLE_STEP);
@@ -512,22 +512,17 @@
     currentTiltAngle = SERVO_CENTER;
     delay(300);
 
-    // Step 4: Two quick mini dips (authentic nod)
-    Serial.println("NOD:First quick dip");
-    smoothTiltMove(currentTiltAngle, SERVO_CENTER + 15);
-    currentTiltAngle = SERVO_CENTER + 15;
-    delay(150);
-    smoothTiltMove(currentTiltAngle, SERVO_CENTER);
-    currentTiltAngle = SERVO_CENTER;
-    delay(100);
-
-    Serial.println("NOD:Second quick dip");
-    smoothTiltMove(currentTiltAngle, SERVO_CENTER + 15);
-    currentTiltAngle = SERVO_CENTER + 15;
-    delay(150);
-    smoothTiltMove(currentTiltAngle, SERVO_CENTER);
-    currentTiltAngle = SERVO_CENTER;
-    delay(200);
+    // Step 4: Multiple quick nods for better effect
+    for (int i = 0; i < 4; i++) {
+      Serial.print("NOD:Quick nod #");
+      Serial.println(i + 1);
+      smoothTiltMove(currentTiltAngle, SERVO_CENTER + 25);
+      currentTiltAngle = SERVO_CENTER + 25;
+      delay(300);
+      smoothTiltMove(currentTiltAngle, SERVO_CENTER);
+      currentTiltAngle = SERVO_CENTER;
+      delay(300);
+    }
 
     // Step 5: Return to original home position
     Serial.println("NOD:Returning to home position");
@@ -572,37 +567,17 @@
   }
 
   void smoothMove(int fromAngle, int toAngle) {
-    int steps = abs(toAngle - fromAngle);
-    int stepDelay = max(8, 20 - steps); // Faster movement
-
-    if (steps > 0) {
-      int direction = (toAngle > fromAngle) ? 1 : -1;
-
-      for (int i = 0; i <= steps; i++) {
-        int currentAngle = fromAngle + (i * direction);
-        panServo.write(currentAngle);
-        Serial.print("SERVO:PAN:");
-        Serial.println(currentAngle);
-        delay(stepDelay);
-      }
-      delay(100); // Short settling time
-    }
+    // Direct movement to stop rattling
+    panServo.write(toAngle);
+    Serial.print("SERVO:PAN:");
+    Serial.println(toAngle);
+    delay(500); // Wait for servo to settle completely
   }
 
   void smoothTiltMove(int fromAngle, int toAngle) {
-    int steps = abs(toAngle - fromAngle);
-    int stepDelay = max(10, 25 - steps); // Faster tilt movement
-
-    if (steps > 0) {
-      int direction = (toAngle > fromAngle) ? 1 : -1;
-
-      for (int i = 0; i <= steps; i++) {
-        int currentAngle = fromAngle + (i * direction);
-        tiltServo.write(currentAngle);
-        delay(stepDelay);
-      }
-      delay(150); // Short settling time for tilt
-    }
+    // Direct movement to stop rattling
+    tiltServo.write(toAngle);
+    delay(100); // Quick movement for responsive nodding
   }
 
   void smoothTiltMoveNatural(int fromAngle, int toAngle, int baseDelay) {

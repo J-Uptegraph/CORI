@@ -212,7 +212,7 @@ class CORIHardwareBridge(Node):
                 # Convert radians to degrees for ESP32
                 angle_deg = math.degrees(angle)
                 
-                # Send angle command directly to ESP32
+                # Send angle command directly to ESP32 (web interface handles direction correctly)
                 self.send_command(f"ANGLE:{angle:.3f}")
                 # Only log significant movements to reduce spam
                 if abs(angle) > 0.1:
@@ -233,7 +233,7 @@ class CORIHardwareBridge(Node):
                 # Convert radians to degrees for ESP32
                 angle_deg = math.degrees(angle)
                 
-                # Send tilt command directly to ESP32
+                # Send tilt command directly to ESP32 (web interface handles direction correctly)
                 self.send_command(f"TILT:{angle:.3f}")
                 self.get_logger().info(f"🎯 Tilt command: {angle:.3f} rad ({angle_deg:.1f}°) → ESP32")
                 
@@ -258,24 +258,25 @@ class CORIHardwareBridge(Node):
         try:
             color = msg.data.lower()
             
-            # Map colors to ESP32 commands
-            color_map = {
-                'red': 'red',
-                'orange': 'orange', 
-                'yellow': 'yellow',
-                'green': 'green',
-                'blue': 'blue',
-                'purple': 'purple',
-                'grey': 'grey',
-                'gray': 'grey',
-                'black': 'black',
-                'white': 'white'
+            # Map colors to angle values (corrected for backwards servo - negative=right, positive=left)
+            # DRAMATIC hardware movements - much more emphasis
+            color_angle_map = {
+                'red': 1.20,      # Far left (positive angle makes backwards servo turn left)
+                'orange': 0.85,   # Left
+                'yellow': 0.50,   # Mid-left
+                'green': 0.0,     # Center position
+                'blue': -0.50,    # Mid-right (negative angle makes backwards servo turn right)
+                'purple': -0.85,  # Right
+                'grey': -1.20,    # Far right
+                'gray': -1.20,    # Same as grey
+                'black': -1.40,   # Extreme right (negative angle makes backwards servo turn right)
+                'white': 0.0      # Center position
             }
             
-            if color in color_map:
-                esp32_color = color_map[color]
-                self.send_command(esp32_color)
-                self.get_logger().info(f"🎨 Color detected: {color} -> sending '{esp32_color}' to ESP32")
+            if color in color_angle_map:
+                hardware_angle = color_angle_map[color]
+                self.send_command(f"ANGLE:{hardware_angle:.3f}")
+                self.get_logger().info(f"🎨 Color detected: {color} -> hardware angle {hardware_angle:.3f}")
             
         except Exception as e:
             self.get_logger().error(f"❌ Color callback error: {e}")
