@@ -16,9 +16,7 @@ cori_hardware/hardware_integration.py
 cori_hardware/hardware_test.py
 cori_hardware/index.html
 cori_hardware/realtime_web_control.py
-cori_hardware/ros_web_bridge.py
 cori_hardware/web_api.py
-cori_hardware/web_api_simple.py
 launch/hardware_bridge.launch.py
 launch/realtime_web_control.launch.py
 resource/cori_hardware

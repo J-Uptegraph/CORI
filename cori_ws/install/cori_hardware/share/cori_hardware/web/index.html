@@ -508,7 +508,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>CORI WIRELESS ROBOT CONTROLS</h1>
+            <h1>CORI ROBOT CONTROLLER</h1>
             <p>Built By Johnathan Uptegraph</p>
         </div>
         
@@ -526,19 +526,6 @@
             </div>
             <input type="text" class="connection-input" id="wsUrl" placeholder="ws://[YOUR_PUBLIC_IP]:8767 for internet access">
             <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
-        </div>
-        
-        <!-- 1X Demo Section -->
-        <div class="demo-section" id="demoSection">
-            <div class="demo-content">
-                <h2>Should Johnathan Join the 1X Team?</h2>
-                <button class="demo-button" id="demoButton" onclick="shouldJohnJoin1X()">
-                    ASK CORI
-                </button>
-                <div class="demo-result" id="demoResult" style="display: none;">
-                    <h3>Johnathan and CORI both think that would be a fantastic idea!</h3>
-                </div>
-            </div>
         </div>
         
         <div class="control-section">
@@ -598,8 +585,19 @@
                 <button class="action-btn emergency" onclick="emergencyStop()">EMERGENCY STOP</button>
             </div>
         </div>
-        
-        
+
+    <!-- 1X Demo Section -->
+        <div class="demo-section" id="demoSection">
+            <div class="demo-content">
+                <h2>Should Johnathan Join the 1X Team?</h2>
+                <button class="demo-button" id="demoButton" onclick="shouldJohnJoin1X()">
+                    ASK CORI
+                </button>
+                <div class="demo-result" id="demoResult" style="display: none;">
+                    <h3>Johnathan and CORI both think that would be a fantastic idea!</h3>
+                </div>
+            </div>
+        </div>
         <div class="control-section">
             <div class="section-title">
                 System Feedback
