@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>1X Robot Character Software Engineer Demo</title>
+    <meta name="description" content="Mobile-friendly real-time remote control for CORI robot">
+    <meta name="author" content="Johnathan Uptegraph">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2322c55e%22/></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin: 0;
+        }
+        
+        /* Demo Section Styles */
+        .demo-section {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .demo-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+        
+        .demo-button {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #000000;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+        }
+        
+        .demo-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .demo-result {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+        }
+        
+        .demo-result h3 {
+            color: #22c55e;
+            font-size: 1.4rem;
+            margin: 0;
+        }
+        
+        .status-bar {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ef4444;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.connected {
+            background: #22c55e;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .control-section {
+            background: #111111;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #333333;
+            transition: all 0.3s ease;
+        }
+        
+        .control-section:hover {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Sliders Grid */
+        .sliders-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .sliders-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+        
+        .slider-container {
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333333;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+        }
+        
+        .slider-value {
+            font-weight: 600;
+            color: #4ade80;
+            font-size: 1rem;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 48px;
+            border-radius: 8px;
+            background: #0a0a0a;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            border: 1px solid #555555;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .slider:hover {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+        
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            border: 3px solid #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .slider::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+        
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(12px, 3vw, 20px);
+            margin-bottom: 24px;
+        }
+        
+        /* Color Grid - horizontal line */
+        .color-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 1vw;
+            margin-bottom: 24px;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .color-grid .action-btn {
+            flex: 1;
+            min-width: 0;
+            font-size: clamp(0.6rem, 1.5vw, 0.9rem);
+            padding: clamp(8px, 2vw, 12px) clamp(2px, 1vw, 8px);
+            white-space: nowrap;
+        }
+        
+        /* Vertical Slider (Up/Down) */
+        .vertical-slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 24px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+        }
+        
+        .vertical-slider {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 60px;
+            height: 300px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            position: relative;
+        }
+        
+        .vertical-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            border: 3px solid #ffffff;
+            transition: all 0.2s ease;
+        }
+        
+        .vertical-slider::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+        }
+        
+        .vertical-slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+        
+        .vertical-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 300px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+        
+        .action-btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: #e5e5e5;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #333;
+            min-height: 48px;
+        }
+        
+        .action-btn:hover {
+            background: #2a2a2a;
+            border-color: #22c55e;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.98);
+            background: #333;
+        }
+        
+        .action-btn.emergency {
+            background: linear-gradient(45deg, #ef4444, #dc2626) !important;
+            color: white !important;
+            grid-column: 1 / -1;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 1px solid #dc2626 !important;
+        }
+        
+        .action-btn.emergency:hover {
+            background: linear-gradient(45deg, #dc2626, #b91c1c) !important;
+            border-color: #b91c1c !important;
+        }
+        
+        .color-btn {
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.05) !important;
+            border-color: rgba(255, 255, 255, 0.4) !important;
+        }
+        
+        /* Connection Section */
+        .connection-section {
+            margin-bottom: 24px;
+        }
+        
+        .connection-input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            border: 1px solid #555;
+        }
+        
+        .connection-input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .connect-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: #000000;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .connect-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .connect-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Feedback */
+        .feedback {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        
+        .feedback-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feedback-item.success {
+            color: #4ade80;
+        }
+        
+        .feedback-item.error {
+            color: #ef4444;
+        }
+        
+        .feedback-item.info {
+            color: #60a5fa;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .control-section {
+                padding: 20px;
+            }
+            
+            .slider {
+                height: 44px;
+            }
+            
+            .slider::-webkit-slider-thumb {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .vertical-slider {
+                height: 240px;
+                width: 50px;
+            }
+            
+            .vertical-labels {
+                height: 240px;
+            }
+        }
+        
+        /* Landscape Mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .vertical-slider {
+                height: 180px;
+                width: 45px;
+            }
+            
+            .vertical-labels {
+                height: 180px;
+            }
+            
+            .container {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CORI WIRELESS ROBOT CONTROLS</h1>
+            <p>Built By Johnathan Uptegraph</p>
+        </div>
+        
+        <div class="status-bar">
+            <div style="display: flex; align-items: center;">
+                <div class="status-dot" id="connectionStatus"></div>
+                <span id="connectionText">Disconnected</span>
+            </div>
+            <span id="latencyDisplay">-- ms</span>
+        </div>
+        
+        <div class="control-section connection-section">
+            <div class="section-title">
+                Connection
+            </div>
+            <input type="text" class="connection-input" id="wsUrl" placeholder="ws://[YOUR_PUBLIC_IP]:8767 for internet access">
+            <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
+        </div>
+        
+        <!-- 1X Demo Section -->
+        <div class="demo-section" id="demoSection">
+            <div class="demo-content">
+                <h2>Should Johnathan Join the 1X Team?</h2>
+                <button class="demo-button" id="demoButton" onclick="shouldJohnJoin1X()">
+                    ASK CORI
+                </button>
+                <div class="demo-result" id="demoResult" style="display: none;">
+                    <h3>Johnathan and CORI both think that would be a fantastic idea!</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">
+                Head Control
+            </div>
+            
+            <div class="sliders-grid">
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Horizontal: LEFT ← → RIGHT</span>
+                        <span class="slider-value" id="horizontalValue">0.0°</span>
+                    </div>
+                    <input type="range" class="slider" id="horizontalSlider" 
+                           min="-1.047" max="1.047" step="0.01" value="0">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Vertical: DOWN ← → UP</span>
+                        <span class="slider-value" id="verticalValue">0.0°</span>
+                    </div>
+                    <input type="range" class="slider" id="verticalSlider" 
+                           min="-0.8" max="0.8" step="0.01" value="0">
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">
+                Gazebo Color Commands
+            </div>
+            <div class="color-grid">
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #000000, #374151); color: white;" onclick="sendColor('black')">Black</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #6b7280, #9ca3af); color: white;" onclick="sendColor('grey')">Grey</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white;" onclick="sendColor('purple')">Purple</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #3b82f6, #2563eb); color: white;" onclick="sendColor('blue')">Blue</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #22c55e, #16a34a); color: white;" onclick="sendColor('green')">Green</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #ffd700, #ffed4e); color: black;" onclick="sendColor('yellow')">Yellow</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #ff8c00, #ff6347); color: white;" onclick="sendColor('orange')">Orange</button>
+                <button class="action-btn color-btn" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white;" onclick="sendColor('red')">Red</button>
+            </div>
+        </div>
+        
+        <div class="control-section">
+            <div class="section-title">
+                Quick Actions
+            </div>
+            <div class="quick-actions">
+                <button class="action-btn" onclick="incrementPosition(-0.1)">Left</button>
+                <button class="action-btn" onclick="setPosition(0)">Center</button>
+                <button class="action-btn" onclick="incrementPosition(0.1)">Right</button>
+                <button class="action-btn" onclick="incrementTiltPosition(-0.076)">Look Down</button>
+                <button class="action-btn" onclick="setTiltPosition(0)">Tilt Center</button>
+                <button class="action-btn" onclick="incrementTiltPosition(0.076)">Look Up</button>
+                <button class="action-btn emergency" onclick="emergencyStop()">EMERGENCY STOP</button>
+            </div>
+        </div>
+        
+        
+        <div class="control-section">
+            <div class="section-title">
+                System Feedback
+            </div>
+            <div class="feedback" id="feedbackList"></div>
+        </div>
+    </div>
+
+    <script>
+        class CORIController {
+            constructor() {
+                this.ws = null;
+                this.connected = false;
+                this.connecting = false;
+                this.setupEventListeners();
+                this.loadSettings();
+            }
+            
+            loadSettings() {
+                const savedUrl = localStorage.getItem('cori-websocket-url');
+                if (savedUrl) {
+                    document.getElementById('wsUrl').value = savedUrl;
+                } else {
+                    // Auto-detect WebSocket URL for internet access
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    const host = window.location.host; // includes port if present
+                    
+                    // Use nginx proxy path for external access, direct port for localhost
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        const autoUrl = `${protocol}//${window.location.hostname}:8767`;
+                        document.getElementById('wsUrl').value = autoUrl;
+                    } else {
+                        const autoUrl = `${protocol}//${host}/ws`;
+                        document.getElementById('wsUrl').value = autoUrl;
+                    }
+                }
+            }
+            
+            setupEventListeners() {
+                // Horizontal slider - visual feedback on input, command on release
+                const horizontalSlider = document.getElementById('horizontalSlider');
+                const horizontalValue = document.getElementById('horizontalValue');
+                
+                // Update display in real-time
+                horizontalSlider.addEventListener('input', (e) => {
+                    const angle = parseFloat(e.target.value);
+                    horizontalValue.textContent = `${(angle * 57.2958).toFixed(1)}°`;
+                });
+                
+                // Send command only on mouse release
+                horizontalSlider.addEventListener('change', (e) => {
+                    if (!this.connected) {
+                        this.addFeedback('Please connect to CORI first', 'error');
+                        return;
+                    }
+                    const angle = -parseFloat(e.target.value);  // Negate for correct direction
+                    this.sendAngle(angle);
+                });
+                
+                // Vertical slider - visual feedback on input, command on release
+                const verticalSlider = document.getElementById('verticalSlider');
+                const verticalValue = document.getElementById('verticalValue');
+                
+                // Update display in real-time
+                verticalSlider.addEventListener('input', (e) => {
+                    const angle = parseFloat(e.target.value);
+                    verticalValue.textContent = `${(angle * 57.2958).toFixed(1)}°`;
+                });
+                
+                // Send command only on mouse release
+                verticalSlider.addEventListener('change', (e) => {
+                    if (!this.connected) {
+                        this.addFeedback('Please connect to CORI first', 'error');
+                        return;
+                    }
+                    const angle = -parseFloat(e.target.value);  // Negate for correct direction
+                    this.sendTiltAngle(angle);
+                });
+                
+                // Connection input
+                document.getElementById('wsUrl').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.connect();
+                    }
+                });
+            }
+            
+            connect() {
+                if (this.connected || this.connecting) return;
+                
+                const url = document.getElementById('wsUrl').value.trim();
+                if (!url) {
+                    this.addFeedback('Please enter a WebSocket URL', 'error');
+                    return;
+                }
+                
+                this.connecting = true;
+                this.updateConnectionStatus();
+                localStorage.setItem('cori-websocket-url', url);
+                
+                try {
+                    this.ws = new WebSocket(url);
+                    
+                    this.ws.onopen = () => {
+                        this.connected = true;
+                        this.connecting = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Connected to CORI robot', 'success');
+                    };
+                    
+                    this.ws.onmessage = (event) => {
+                        const message = JSON.parse(event.data);
+                        this.handleMessage(message);
+                    };
+                    
+                    this.ws.onclose = () => {
+                        this.connected = false;
+                        this.connecting = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Disconnected from CORI robot', 'error');
+                    };
+                    
+                    this.ws.onerror = () => {
+                        this.connecting = false;
+                        this.updateConnectionStatus();
+                        this.addFeedback('Connection failed', 'error');
+                    };
+                    
+                } catch (error) {
+                    this.connecting = false;
+                    this.updateConnectionStatus();
+                    this.addFeedback(`Connection error: ${error.message}`, 'error');
+                }
+            }
+            
+            disconnect() {
+                if (this.ws) {
+                    this.ws.close();
+                }
+                this.connected = false;
+                this.connecting = false;
+                this.updateConnectionStatus();
+            }
+            
+            updateConnectionStatus() {
+                const statusDot = document.getElementById('connectionStatus');
+                const statusText = document.getElementById('connectionText');
+                const connectBtn = document.getElementById('connectBtn');
+                
+                statusDot.classList.remove('connected');
+                
+                if (this.connected) {
+                    statusDot.classList.add('connected');
+                    statusText.textContent = 'Connected';
+                    connectBtn.textContent = 'Disconnect';
+                } else if (this.connecting) {
+                    statusText.textContent = 'Connecting...';
+                    connectBtn.textContent = 'Cancel';
+                } else {
+                    statusText.textContent = 'Disconnected';
+                    connectBtn.textContent = 'Connect';
+                }
+            }
+            
+            handleMessage(message) {
+                switch (message.type) {
+                    case 'feedback':
+                        document.getElementById('latencyDisplay').textContent = `${message.data.processing_time_ms} ms`;
+                        this.addFeedback(`Command executed in ${message.data.processing_time_ms}ms`, 'info');
+                        break;
+                    case 'status':
+                        this.addFeedback(`Robot: ${message.data}`, 'info');
+                        break;
+                    case 'error':
+                        this.addFeedback(`Error: ${message.data}`, 'error');
+                        break;
+                    case 'welcome':
+                        this.addFeedback(message.data, 'success');
+                        break;
+                }
+            }
+            
+            addFeedback(message, type = 'info') {
+                const feedbackList = document.getElementById('feedbackList');
+                const item = document.createElement('div');
+                item.className = `feedback-item ${type}`;
+                
+                const timestamp = new Date().toLocaleTimeString();
+                item.innerHTML = `<small>${timestamp}</small> ${message}`;
+                
+                feedbackList.insertBefore(item, feedbackList.firstChild);
+                
+                // Keep only last 10 items
+                while (feedbackList.children.length > 10) {
+                    feedbackList.removeChild(feedbackList.lastChild);
+                }
+            }
+            
+            send(command) {
+                if (this.ws && this.connected) {
+                    this.ws.send(JSON.stringify(command));
+                } else {
+                    this.addFeedback('Not connected to robot', 'error');
+                }
+            }
+            
+            sendAngle(angle) {
+                this.send({
+                    type: 'angle',
+                    data: { angle: parseFloat(angle) }
+                });
+                this.addFeedback(`Head horizontal: ${(angle * 57.2958).toFixed(1)}°`, 'info');
+            }
+            
+            sendTiltAngle(angle) {
+                this.send({
+                    type: 'tilt',
+                    data: { angle: parseFloat(angle) }
+                });
+                this.addFeedback(`Head vertical: ${(angle * 57.2958).toFixed(1)}°`, 'info');
+            }
+            
+            sendColor(color) {
+                this.send({
+                    type: 'color',
+                    data: { color: color }
+                });
+                this.addFeedback(`🎨 Color command: ${color}`, 'info');
+            }
+            
+            emergencyStop() {
+                this.send({
+                    type: 'emergency_stop',
+                    data: {}
+                });
+                this.addFeedback('EMERGENCY STOP ACTIVATED!', 'error');
+            }
+        }
+        
+        // Global controller instance
+        let controller;
+        
+        // Global functions
+        function toggleConnection() {
+            if (controller.connected || controller.connecting) {
+                controller.disconnect();
+            } else {
+                controller.connect();
+            }
+        }
+        
+        function setPosition(horizontal) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const horizontalSlider = document.getElementById('horizontalSlider');
+            const horizontalValue = document.getElementById('horizontalValue');
+            
+            // Set slider to direct value
+            horizontalSlider.value = -horizontal;  // Negate for slider display
+            horizontalValue.textContent = `${(-horizontal * 57.2958).toFixed(1)}°`;
+            
+            controller.sendAngle(-horizontal);  // Negate for backwards servo
+        }
+        
+        function incrementPosition(increment) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const horizontalSlider = document.getElementById('horizontalSlider');
+            const currentValue = parseFloat(horizontalSlider.value);
+            const newValue = Math.max(-1.047, Math.min(1.047, currentValue + increment));
+            
+            horizontalSlider.value = newValue;
+            document.getElementById('horizontalValue').textContent = `${(newValue * 57.2958).toFixed(1)}°`;
+            
+            controller.sendAngle(-newValue);  // Negate because slider value is display-negated
+        }
+        
+        function setTiltPosition(tilt) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const verticalSlider = document.getElementById('verticalSlider');
+            const verticalValue = document.getElementById('verticalValue');
+            
+            verticalSlider.value = -tilt;  // Negate for slider display
+            verticalValue.textContent = `${(-tilt * 57.2958).toFixed(1)}°`;
+            
+            controller.sendTiltAngle(-tilt);  // Negate for backwards servo
+        }
+        
+        function incrementTiltPosition(increment) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            const verticalSlider = document.getElementById('verticalSlider');
+            const currentValue = parseFloat(verticalSlider.value);
+            const newValue = Math.max(-0.8, Math.min(0.8, currentValue + increment));
+            
+            verticalSlider.value = newValue;
+            document.getElementById('verticalValue').textContent = `${(newValue * 57.2958).toFixed(1)}°`;
+            
+            controller.sendTiltAngle(-newValue);  // Negate because slider value is display-negated
+        }
+        
+        function emergencyStop() {
+            controller.emergencyStop();
+        }
+        
+        function sendColor(color) {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            // Send color command
+            controller.sendColor(color);
+        }
+        
+        function shouldJohnJoin1X() {
+            if (!controller.connected) {
+                controller.addFeedback('Please connect to CORI first', 'error');
+                return;
+            }
+            
+            // Disable button during animation
+            const demoButton = document.getElementById('demoButton');
+            demoButton.disabled = true;
+            demoButton.textContent = 'THINKING...';
+            
+            controller.addFeedback('CORI is thinking about this amazing opportunity...', 'info');
+            
+            // Human-like thinking sequence with personality!
+            // Step 1: Quick look up (like "hmm, let me think")
+            setTimeout(() => {
+                controller.sendTiltAngle(-0.3);
+                updateSliders(0, -0.3);
+                controller.addFeedback('Hmm, let me think about this...', 'info');
+            }, 200);
+            
+            // Step 2: Quick glance left (considering options)
+            setTimeout(() => {
+                controller.sendAngle(-0.6);
+                updateSliders(-0.6, -0.3);
+                controller.addFeedback('Weighing the possibilities...', 'info');
+            }, 800);
+            
+            // Step 3: Quick glance right (considering more options) 
+            setTimeout(() => {
+                controller.sendAngle(0.6);
+                updateSliders(0.6, -0.3);
+                controller.addFeedback('On one hand... on the other hand...', 'info');
+            }, 1400);
+            
+            // Step 4: Back to center, head straight - decision time!
+            setTimeout(() => {
+                controller.sendAngle(0);
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+                controller.addFeedback('Wait... the answer is obvious!', 'success');
+            }, 2000);
+            
+            // Step 5: ENTHUSIASTIC NODDING SEQUENCE!
+            let nodTime = 2600;
+            const nodInterval = 350; // Human-speed enthusiastic nods
+            const nodAngle = 0.7; // Enthusiastic but not crazy
+            
+            // Excited nod 1
+            setTimeout(() => {
+                controller.sendTiltAngle(nodAngle);
+                updateSliders(0, nodAngle);
+                controller.addFeedback('YES!', 'success');
+            }, nodTime);
+            
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, nodTime + 180);
+            nodTime += nodInterval;
+            
+            // Excited nod 2
+            setTimeout(() => {
+                controller.sendTiltAngle(nodAngle);
+                updateSliders(0, nodAngle);
+                controller.addFeedback('I think that would be a great idea!', 'success');
+            }, nodTime);
+            
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+            }, nodTime + 180);
+            nodTime += nodInterval;
+            
+            // Excited nod 3
+            setTimeout(() => {
+                controller.sendTiltAngle(nodAngle);
+                updateSliders(0, nodAngle);
+                controller.addFeedback('What an exciting opportunity!', 'success');
+            }, nodTime);
+            
+            // Final return with enthusiasm
+            setTimeout(() => {
+                controller.sendTiltAngle(0);
+                updateSliders(0, 0);
+                controller.addFeedback('This seems like the perfect fit!', 'success');
+                
+                // Show result and update button
+                document.getElementById('demoResult').style.display = 'block';
+                demoButton.textContent = 'ASK AGAIN';
+                demoButton.disabled = false;
+            }, nodTime + 400);
+        }
+        
+        function updateSliders(horizontal, vertical) {
+            document.getElementById('horizontalSlider').value = -horizontal;  // Negate for slider display
+            document.getElementById('verticalSlider').value = -vertical;      // Negate for slider display
+            document.getElementById('horizontalValue').textContent = `${(-horizontal * 57.2958).toFixed(1)}°`;
+            document.getElementById('verticalValue').textContent = `${(-vertical * 57.2958).toFixed(1)}°`;
+        }
+        
+        // Initialize controller when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            controller = new CORIController();
+        });
+    </script>
+</body>
+</html>
