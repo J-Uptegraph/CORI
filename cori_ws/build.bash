@@ -116,59 +116,17 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
 
     # Display URL information
     display_urls() {
-        # Get IPv4 addresses only - multiple methods to ensure IPv4
-        local local_ip=""
-        
-        # Method 1: Use ip route to get primary IPv4
-        local_ip=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-        
-        # Method 2: Use ip addr to get IPv4 from active interface
-        if [ -z "$local_ip" ]; then
-            local_ip=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
-        fi
-        
-        # Method 3: Use hostname with strict IPv4 filtering
-        if [ -z "$local_ip" ]; then
-            local_ip=$(hostname -I | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
-        fi
-        
-        local public_ip=$(get_public_ip)
+        local local_ip=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        local public_ip=$(get_public_ipv4)
         
         echo ""
-        echo "╭────────────────────────────────────────────────────────────────╮"
-        echo "│                    🌐 CORI WEB INTERFACE LINKS                 │"
-        echo "├────────────────────────────────────────────────────────────────┤"
-        echo "│                                                                │"
-        echo "│ 📍 Local:  http://localhost:8091/index.html                   │"
-        
-        if [ -n "$local_ip" ]; then
-            printf "│ 🏠 LAN:    %-47s │\n" "http://$local_ip:8091/index.html"
-        fi
+        echo "🔐 USERNAME: ${CORI_USERNAME:-[set via environment]}  PASSWORD: ${CORI_PASSWORD:-[set via environment]}"
+        echo ""
+        echo "📍 Localhost: http://localhost/"
         
         if [ -n "$public_ip" ] && [ "$public_ip" != "$local_ip" ]; then
-            printf "│ 🌍 Public: %-47s │\n" "http://$public_ip:8091/index.html"
-            echo "│                                                                │"
-            echo "│ 🎉 SEND THIS TO YOUR FRIENDS! 🎉                              │"
-            printf "│    👉 %-54s │\n" "http://$public_ip:8091/index.html"
-            echo "│                                                                │"
-            echo "│ 🇳🇴 Norway friends can control CORI!                          │"
-            echo "│ 🇺🇸 Jersey parents can control CORI!                          │"
-            echo "│ 🌍 Anyone worldwide can control CORI!                         │"
-            echo "│                                                                │"
-            printf "│ 📋 Copy & paste this link: %-30s │\n" "$public_ip:8091/index.html"
-            echo "│ ⚠️  Note: Ensure ports 8091 & 8767 are forwarded              │"
-        else
-            echo "│                                                                │"
-            echo "│ ⚠️  Public IP not detected - trying to detect...               │"
-            echo "│                                                                │"
-            if [ -n "$local_ip" ]; then
-                printf "│ 🏠 Try LAN link for now: %-32s │\n" "http://$local_ip:8091/index.html"
-            fi
-            echo "│ 💡 Check internet connection and port forwarding               │"
+            echo "🌍 Anywhere:  http://$public_ip/"
         fi
-        
-        echo "│                                                                │"
-        echo "╰────────────────────────────────────────────────────────────────╯"
         echo ""
     }
 
@@ -205,10 +163,26 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
         # Kill hardware bridge processes
         pkill -f "realtime_web_control" 2>/dev/null || true
         pkill -f "hardware_bridge" 2>/dev/null || true
+        pkill -f "arduino_bridge" 2>/dev/null || true
         
-        # Kill web server processes on port 8091
+        # Kill web server processes (both old and new)
         pkill -f "python.*8091" 2>/dev/null || true
         pkill -f "http.server.*8091" 2>/dev/null || true
+        pkill -f "http.server" 2>/dev/null || true
+        pkill -f "web_api.py" 2>/dev/null || true
+        pkill -f "python.*8000" 2>/dev/null || true
+        pkill -f "python.*8767" 2>/dev/null || true
+        pkill -f "uvicorn" 2>/dev/null || true
+        pkill -f "fastapi" 2>/dev/null || true
+        
+        # Force kill any processes still using ports 8000, 8091, 8767
+        local port_pids=$(netstat -tulpn 2>/dev/null | grep -E ":(8000|8091|8767)" | awk '{print $7}' | cut -d'/' -f1 | grep -v '-' | sort -u)
+        for pid in $port_pids; do
+            if [ -n "$pid" ] && [ "$pid" != "0" ]; then
+                echo "🔫 Force killing process $pid using port 8000/8091/8767"
+                kill -9 "$pid" 2>/dev/null || true
+            fi
+        done
         
         # Force kill any remaining python processes that might be CORI-related
         pgrep -f "cori.*python" | xargs -r kill -9 2>/dev/null || true
@@ -391,12 +365,90 @@ run_laundry_assistant() {
     python3 cori_simulator.py
 }
 
-# Run real-time web control
+# Run secure nginx web control
+run_secure_web_control() {
+    cleanup_processes "secure web control"
+    trap 'cleanup_processes "secure web control"; exit 0' SIGINT
+    echo "🔐 CORI SECURE WEB CONTROL (NGINX REVERSE PROXY)"
+    echo "================================================"
+    echo "🎯 Features:"
+    echo "   🔐 Secure nginx reverse proxy with authentication"
+    echo "   🚀 Zero-latency WebSocket control"
+    echo "   🎮 Web interface with gamepad support"
+    echo "   📡 Direct ROS topic publishing"
+    echo "   🔄 Real-time feedback and status"
+    echo "   🎨 Color and angle control"
+    echo "   🛑 Emergency stop capability"
+    echo "   🔗 ESP32 hardware bridge for real servos"
+    echo "   🤖 Controls both simulation AND physical robot"
+    echo ""
+    read -p "🚀 Start secure web control? [y/N]: " confirm
+    [[ ! $confirm =~ ^[Yy]$ ]] && { echo "👋 Cancelled"; exit 0; }
+    
+    # Check if nginx is running
+    if ! systemctl is-active --quiet nginx; then
+        echo "⚠️ Nginx not running, starting..."
+        sudo systemctl start nginx || { echo "❌ Failed to start nginx"; exit 1; }
+    fi
+    
+    echo "🎮 Starting Gazebo simulation first..."
+    start_gazebo GAZEBO_PID
+    echo "🔍 Verifying Gazebo startup..."
+    sleep 5
+    
+    echo "🚀 Starting FastAPI backend on port 8000..."
+    python3 src/cori_hardware/cori_hardware/web_api.py &
+    FASTAPI_PID=$!
+    sleep 3
+    
+    echo "🔗 Starting Arduino bridge for ESP32 communication..."
+    source install/setup.bash
+    python3 src/cori_hardware/cori_hardware/arduino_bridge.py &
+    ARDUINO_PID=$!
+    sleep 3
+    
+    echo "🔌 Starting WebSocket server on port 8767..."
+    python3 src/cori_hardware/cori_hardware/realtime_web_control.py &
+    WEBSOCKET_PID=$!
+    sleep 3
+    
+    echo "🌐 Starting HTTP server on port 8091..."
+    cd src/cori_hardware/cori_hardware
+    python3 -m http.server 8091 --bind 0.0.0.0 &
+    HTTP_PID=$!
+    cd - > /dev/null
+    sleep 3
+    
+    echo "✅ System ready!"
+    display_urls
+    echo "🎮 Use keyboard arrows, mouse, or gamepad for control"
+    echo "🛑 Press Ctrl+C to stop"
+    echo ""
+    
+    # Wait for servo testing to complete
+    echo "⏳ Waiting for servo testing to complete..."
+    sleep 10
+    echo "🎯 All testing complete! System is fully operational."
+    
+    while true; do 
+        sleep 1
+        [ -z "$(ps -p $FASTAPI_PID -o pid=)" ] && { echo "❌ FastAPI backend stopped"; cleanup_processes "secure web control"; exit 1; }
+        [ -z "$(ps -p $ARDUINO_PID -o pid=)" ] && { echo "❌ Arduino bridge stopped"; cleanup_processes "secure web control"; exit 1; }
+        [ -z "$(ps -p $HTTP_PID -o pid=)" ] && { echo "❌ HTTP server stopped"; cleanup_processes "secure web control"; exit 1; }
+        [ -z "$(ps -p $WEBSOCKET_PID -o pid=)" ] && { echo "❌ WebSocket stopped"; cleanup_processes "secure web control"; exit 1; }
+        [ -z "$(ps -p $GAZEBO_PID -o pid=)" ] && { echo "❌ Gazebo stopped"; cleanup_processes "secure web control"; exit 1; }
+    done
+}
+
+# Run real-time web control (legacy mode)
 run_realtime_web_control() {
     cleanup_processes "real-time web control"
     trap 'cleanup_processes "real-time web control"; exit 0' SIGINT
-    echo "🌐 CORI REAL-TIME WEB CONTROL + HARDWARE"
-    echo "======================================="
+    echo "🌐 CORI REAL-TIME WEB CONTROL + HARDWARE (LEGACY)"
+    echo "================================================="
+    echo "⚠️ WARNING: This mode uses direct port access (less secure)"
+    echo "💡 Consider using option 11 (Secure Web Control) instead"
+    echo ""
     echo "🎯 Features:"
     echo "   🚀 Zero-latency WebSocket control"
     echo "   🎮 Web interface with gamepad support"
@@ -514,10 +566,11 @@ main() {
         "4) 📷 Webcam Color Detection"
         "5) 🦾 Manual Robot Control"
         "6) 🔗 ESP32 Hardware Bridge"
-        "7) 🌐 Real-time Web Control"
+        "7) 🌐 Real-time Web Control (Legacy)"
         "8) 🧹 Kill All ROS Processes"
         "9) 🔗 System Test"
         "10) 🚪 Exit"
+        "11) 🔐 Secure Web Control (Nginx)"
     )
 
     for item in "${menu_items[@]}"; do
@@ -530,7 +583,7 @@ main() {
     echo "╰"$(printf '─%.0s' $(seq 1 $menu_inner_width))"╯"
     # --- End of Menu Box ---
 
-    read -p "Enter choice [1-10]: " choice
+    read -p "Enter choice [1-11]: " choice
     case $choice in
         1) run_full_system ;;
         2) run_gazebo_only ;;
@@ -542,6 +595,7 @@ main() {
         8) kill_all_processes ;;
         9) run_system_test ;;
         10) echo "👋 Exiting..."; exit 0 ;;
+        11) run_secure_web_control ;;
         *) echo "❌ Invalid choice"; exit 1 ;;
     esac
     echo "🏁 CORI system ended."

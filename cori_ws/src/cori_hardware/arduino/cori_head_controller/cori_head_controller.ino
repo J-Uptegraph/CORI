@@ -497,10 +497,10 @@
     currentTiltAngle = SERVO_CENTER - 25;
     delay(400);
 
-    // Step 2: Turn to look off to the right
-    Serial.println("NOD:Looking off to the right");
-    smoothMove(currentPanAngle, SERVO_CENTER + 40);
-    currentPanAngle = SERVO_CENTER + 40;
+    // Step 2: Turn to look off to the left
+    Serial.println("NOD:Looking off to the left");
+    smoothMove(currentPanAngle, SERVO_CENTER - 40);
+    currentPanAngle = SERVO_CENTER - 40;
     delay(500);
 
     // Step 3: Return pan to center and tilt to straight ahead

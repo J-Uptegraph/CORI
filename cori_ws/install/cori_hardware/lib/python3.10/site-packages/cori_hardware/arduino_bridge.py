@@ -125,6 +125,12 @@ class CORIArduinoBridge(Node):
             # Wait for Arduino to initialize
             time.sleep(2)
             
+            # Send MENU command first to ensure we're in menu mode, then select Gazebo mode
+            self.send_arduino_command("MENU")
+            time.sleep(1)
+            self.send_arduino_command("1")
+            time.sleep(1)
+            
             # Send test command to verify connection
             self.send_arduino_command("STATUS")
             

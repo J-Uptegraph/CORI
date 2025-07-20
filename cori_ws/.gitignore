@@ -1,0 +1,29 @@
+# Build artifacts
+build/
+install/
+log/
+
+# Environment variables (NEVER commit passwords!)
+.env
+*.env
+.env.*
+
+# Backup files
+*~
+*.bak
+*.tmp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# System files
+.DS_Store
+Thumbs.db

@@ -623,11 +623,18 @@
                 if (savedUrl) {
                     document.getElementById('wsUrl').value = savedUrl;
                 } else {
-                    // Auto-detect host for internet access
+                    // Auto-detect WebSocket URL for internet access
                     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                    const host = window.location.hostname;
-                    const autoUrl = `${protocol}//${host}:8767`;
-                    document.getElementById('wsUrl').value = autoUrl;
+                    const host = window.location.host; // includes port if present
+                    
+                    // Use nginx proxy path for external access, direct port for localhost
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        const autoUrl = `${protocol}//${window.location.hostname}:8767`;
+                        document.getElementById('wsUrl').value = autoUrl;
+                    } else {
+                        const autoUrl = `${protocol}//${host}/ws`;
+                        document.getElementById('wsUrl').value = autoUrl;
+                    }
                 }
             }
             
@@ -986,7 +993,7 @@
             setTimeout(() => {
                 controller.sendTiltAngle(nodAngle);
                 updateSliders(0, nodAngle);
-                controller.addFeedback('ABSOLUTELY YES!', 'success');
+                controller.addFeedback('I think that would be a great idea!', 'success');
             }, nodTime);
             
             setTimeout(() => {
@@ -999,14 +1006,14 @@
             setTimeout(() => {
                 controller.sendTiltAngle(nodAngle);
                 updateSliders(0, nodAngle);
-                controller.addFeedback('HIRE JOHNATHAN NOW!', 'success');
+                controller.addFeedback('What an exciting opportunity!', 'success');
             }, nodTime);
             
             // Final return with enthusiasm
             setTimeout(() => {
                 controller.sendTiltAngle(0);
                 updateSliders(0, 0);
-                controller.addFeedback('🚀 CORI says: Join 1X immediately! 🚀', 'success');
+                controller.addFeedback('This seems like the perfect fit!', 'success');
                 
                 // Show result and update button
                 document.getElementById('demoResult').style.display = 'block';

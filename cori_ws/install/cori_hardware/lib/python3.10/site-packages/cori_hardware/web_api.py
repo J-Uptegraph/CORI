@@ -496,19 +496,26 @@ async def list_devices():
 # Startup/Shutdown events
 @app.on_event("startup")
 async def startup_event():
-    """Auto-connect on startup"""
+    """Auto-connect on startup (non-blocking)"""
     logger.info("CORI Hardware API starting up...")
     
-    # Try to auto-connect
-    devices = find_ch341_devices()
-    if devices:
-        logger.info(f"Found devices: {devices}")
-        for device in devices:
-            if connect_to_device(device):
-                logger.info(f"Auto-connected to {device}")
-                break
-    else:
-        logger.warning("No CH341A devices found on startup")
+    # Try to auto-connect in background thread to avoid blocking HTTP server
+    def background_connect():
+        try:
+            devices = find_ch341_devices()
+            if devices:
+                logger.info(f"Found devices: {devices}")
+                for device in devices:
+                    if connect_to_device(device):
+                        logger.info(f"Auto-connected to {device}")
+                        break
+            else:
+                logger.warning("No CH341A devices found on startup")
+        except Exception as e:
+            logger.warning(f"Background connection failed: {e}")
+    
+    # Run connection attempt in background
+    threading.Thread(target=background_connect, daemon=True).start()
 
 @app.on_event("shutdown")
 async def shutdown_event():
