@@ -26,17 +26,41 @@ This isn't about automating tasks—it's about reclaiming our time and energy by
 ---
 
 ## 📢 Latest Updates
-
 <div align="center">
   <table>
     <tr>
-      <td width="50%" align="center">
-        <img src="assets/gifs/CORI_Physical_Detection_to_Joint_Pos.gif" height="400px"/>
+      <td width="100%" align="center">
+        <br><br>
+        <img src="assets/imgs/CORI_Hardware_1.jpg" width="400px"/>
+        <br><b>Complete Assembly</b><br>
+        <em>3D Printed Head with 9G Servos</em>
+      </td>
+      <td width="100%" align="center">
+        <br><br>
+        <img src="assets/imgs/CORI_Prototype_Layout.png" width="400px"/>
+        <br><b>Breadboard Breakdown</b><br>
+        <em>Full Hardware Overview</em>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <img src="assets/gifs/CORI_Gazebo_Hardware_Demo.gif" width="800px"/>
+        <br><b>Physical Head Control</b><br>
+        <em>ESP32-Driven Servo Movement with ROS 2 Integration</em>
+      </td>
+    </tr>
+  </table>
+</div>
+<div align="center">
+  <table>
+    <tr>
+      <td width="100%" align="center">
+        <img src="assets/gifs/CORI_Physical_Detection_to_Joint_Pos.gif" width="400px"/>
         <br><b>Physical Detection → Joint Movement</b><br>
         <em>Physical Camera Drives Virtual Head</em>
       </td>
-      <td width="50%" align="center">
-        <img src="assets/gifs/CORI_Digital_Detection_to_Joint_Pos.gif" height="400px"/>
+      <td width="100%" align="center">
+        <img src="assets/gifs/CORI_Digital_Detection_to_Joint_Pos.gif" width="400px"/>
         <br><b>Digital Detection → Joint Movement</b><br>
         <em>Virtual Head Looks at Virtual Objects</em>
       </td>
@@ -44,53 +68,52 @@ This isn't about automating tasks—it's about reclaiming our time and energy by
       <tr>
         <td colspan="2" align="center">
           <br><br>
-          <img src="assets/gifs/CORI_Terminal_Joint_Control.gif" width="90%"/>
+          <img src="assets/gifs/CORI_Terminal_Joint_Control.gif" width="800px"/>
           <br><b>CORI Simulation Environment</b><br>
           <em>Full System Integration with Gazebo Simulation</em>
         </td>
       </tr>
+      <tr>
         <td width="50%" align="center">
           <br><br>
-          <img src="assets/imgs/CORI_Sorting_Memories_Database.png" height="400px"/>
+          <img src="assets/imgs/CORI_Sorting_Memories_Database.png" width="400px"/>
           <br><b>Adaptive Learning Database</b><br>
           <em>Persistent Memory System with Confidence Scoring</em>
         </td>
         <td width="50%" align="center">
           <br><br>
-          <img src="assets/imgs/CORI_Hamper_Breakdown.png" height="400px"/>
+          <img src="assets/imgs/CORI_Hamper_Breakdown.png" width="400px"/>
           <br><b>Hamper Contents Breakdown</b><br>
           <em>Detailed Sorting History & Item Tracking</em>
         </td>
       </tr>
       <tr>
         <td colspan="2" align="center">
-          <img src="assets/gifs/CORI_Sorting_Interface.gif" width="90%"/>
+          <img src="assets/gifs/CORI_Sorting_Interface.gif" width="800px"/>
           <br><b>Conversational Interface</b><br>
           <em>Natural Language Interaction & Decision Support</em>
         </td>
       </tr>
-      <tr>
     </table>
   </div>
-
   <div align="center">
   <table>
    <tr>
       <td colspan="2" align="center">
         <br>
-        <img src="assets/gifs/CORI_Full_Body_Gravity_Demo.gif" width="70%"/>
+        <img src="assets/gifs/CORI_Full_Body_Gravity_Demo.gif" width="600px"/>
         <br><b>Environment Gravity Demo</b><br>
         <em>CORI Full Body Render with Darks, Lights, Color Hampers + Table and Virtual Clothing with Gravity</em>
       </td>
     </tr>
     <tr>
       <td width="50%" align="center">
-        <img src="assets/gifs/Physical_Multicolor_Test_Book_Demo.gif" height="400px"/>
+        <img src="assets/gifs/Physical_Multicolor_Test_Book_Demo.gif" width="400px"/>
         <br><b>Physical Demo</b><br>
         <em>30FPS Detection Using Camera on Multi-Colored Book</em>
       </td>
       <td width="50%" align="center">
-        <img src="assets/gifs/Virtual_Multicolor_Test_Book_Demo.gif" height="400px"/>
+        <img src="assets/gifs/Virtual_Multicolor_Test_Book_Demo.gif" width="400px"/>
         <br><b>Virtual Demo</b><br>
         <em>Output from CORI's Model in Gazebo to Console</em>
       </td>
@@ -98,16 +121,16 @@ This isn't about automating tasks—it's about reclaiming our time and energy by
     <tr>
       <td width="50%" align="center">
         <br>
-        <img src="assets/gifs/CORI_Blender_Model_v1_Render_Cropped.gif" width="100%"/>
+        <img src="assets/gifs/CORI_Blender_Model_v1_Render_Cropped.gif" width="400px"/>
         <br><b>CORI Model Rendered in Blender</b><br>
       </td>
       <td width="50%" align="center">
         <br>
-        <img src="assets/gifs/openCV_GUI_Darkroom_Test_Cropped.gif" width="100%"/>
+        <img src="assets/gifs/openCV_GUI_Darkroom_Test_Cropped.gif" width="400px"/>
         <br><b>CORI's Color Sorting CV in Darkroom</b><br>
       </td>
     </tr>
-  </table>
+    </table>
 </div>
 
 ---
