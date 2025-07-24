@@ -250,30 +250,4 @@ CORI represents a shift from **command-based automation** to **collaborative int
 
 ---
 
-## 🎤 Interview Discussion Points
-
-### **For Technical Deep Dive (45+ minutes):**
-- Detailed ROS 2 architecture and message passing
-- Computer vision algorithms and OpenCV implementation
-- Hardware integration challenges and solutions
-- Database design and learning algorithms
-- Simulation-to-reality transfer strategies
-
-### **For Surface Overview (10-15 minutes):**
-- Project vision and human-robot collaboration philosophy
-- Key technical achievements and MVP demonstration
-- Modular architecture enabling rapid feature development
-- Real-world application potential and scalability
-
-### **Demo Capabilities:**
-- Live vision processing and color detection
-- Physical hardware control (servo movement)
-- Adaptive learning interface
-- Complete laundry sorting workflow
-- Gazebo simulation environment
-
----
-
-**Ready to discuss any aspect of the project in detail!** 🚀
-
 *Project Repository: [CORI Robotics Platform](https://juptegraph.dev)*
