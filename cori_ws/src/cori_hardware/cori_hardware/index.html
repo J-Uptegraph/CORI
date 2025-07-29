@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>1X Robot Character Software Engineer Demo</title>
+    <title>your team Robot Character Software Engineer Demo</title>
     <meta name="description" content="Mobile-friendly real-time remote control for CORI robot">
     <meta name="author" content="Johnathan Uptegraph">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2322c55e%22/></svg>">
@@ -524,6 +524,8 @@
             <div class="section-title">
                 Connection
             </div>
+            <input type="text" class="connection-input" id="username" placeholder="Username" value="CORI" style="margin-bottom: 12px;">
+            <input type="password" class="connection-input" id="password" placeholder="Password" value="connect" style="margin-bottom: 12px;">
             <input type="text" class="connection-input" id="wsUrl" placeholder="ws://[YOUR_PUBLIC_IP]:8767 for internet access">
             <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
         </div>
@@ -586,18 +588,18 @@
             </div>
         </div>
 
-    <!-- 1X Demo Section -->
-        <div class="demo-section" id="demoSection">
+    <!-- your team Demo Section -->
+        <!-- <div class="demo-section" id="demoSection">
             <div class="demo-content">
-                <h2>Should Johnathan Join the 1X Team?</h2>
-                <button class="demo-button" id="demoButton" onclick="shouldJohnJoin1X()">
+                <h2>Should Johnathan Join your team?</h2>
+                <button class="demo-button" id="demoButton" onclick="shouldJohnJoinYourTeam()">
                     ASK CORI
                 </button>
                 <div class="demo-result" id="demoResult" style="display: none;">
                     <h3>Johnathan and CORI both think that would be a fantastic idea!</h3>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="control-section">
             <div class="section-title">
                 System Feedback
@@ -926,7 +928,7 @@
             controller.sendColor(color);
         }
         
-        function shouldJohnJoin1X() {
+        function shouldJohnJoinYourTeam() {
             if (!controller.connected) {
                 controller.addFeedback('Please connect to CORI first', 'error');
                 return;
