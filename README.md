@@ -5,6 +5,24 @@
 
 That’s exactly why I built CORI. 
 
+---
+
+## 🎯 Quick Overview
+
+**Current Status:** ✅ Working MVP (v1.8 - July 2025)
+
+- 🎥 Real-time computer vision at 30 FPS (OpenCV + HSV classification)
+- 🤖 ESP32 hardware integration with servo control
+- 🧠 Adaptive learning system (confidence-based decisions)
+- 🌐 Web control interface (FastAPI + WebSocket)
+- 📦 Modular ROS 2 architecture (6 independent packages)
+
+**Tech Stack:** ROS 2 Humble • Gazebo • OpenCV • ESP32 • Python/C++ • FastAPI • WebSockets
+
+**Development Velocity:** 8 major releases in 6 weeks (Jun-Jul 2025)
+
+---
+
 C.O.R.I. is a modular, ROS 2–based home assistant robot designed for household tasks like laundry sorting. This personal robotics R&D project lays the groundwork for real-world autonomy, home integration, and experience-based learning.
 
 This isn't about automating tasks-it's about reclaiming our time and energy by simplifying the same mundane tasks we've been doing by hand since the 60s. CORI is here to buy back time so we can focus on what truly matters. Instead of replacing human connection, CORI creates time for more of it. CORI's future will be centered around collaboration and adaptive behavior through behavioral modeling and pattern recongition, with the sole focus of improving quality of life. Right now CORI just sorts laundry, but soon, he will unload your groceries, take out your trash, and streamline the parts of your schedule, finally freeing up more of your time so you can focus on what's important to you.
