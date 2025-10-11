@@ -570,7 +570,7 @@ main() {
         "2) 🎮 Gazebo Simulation"
         "3) 🧺 Laundry Sorting Assistant"
         "4) 📷 Webcam Color Detection"
-        "5) 💬 Terminal Motion Control"
+        "5) 💬 Terminal Motion Control - Type colors: red, blue, green, etc."
         "6) 🔗 ESP32 Hardware Bridge"
         "7) 🌐 Real-time Web Control (Legacy)"
         "8) 🧹 Kill All ROS Processes"
