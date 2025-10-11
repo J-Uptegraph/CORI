@@ -1,7 +1,5 @@
 from setuptools import setup
-
 package_name = 'cori_gui'
-
 setup(
     name=package_name,
     version='1.0.0',
