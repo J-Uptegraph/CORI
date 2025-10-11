@@ -1,0 +1,57 @@
+# ROS2 Build artifacts
+build/
+install/
+log/
+devel/
+
+# Environment variables (NEVER commit passwords!)
+.env
+*.env
+.env.*
+
+# Backup and temporary files
+*~
+*.bak
+*.tmp
+*.orig
+*.rej
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+.atom/
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Security files (in case someone creates these)
+*.key
+*.pem
+*.crt
+*.htpasswd
+
+# Logs and databases
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Compiled binaries
+*.exe
+*.dll
+*.o
+*.a
