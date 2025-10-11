@@ -9,7 +9,7 @@ That’s exactly why I built CORI.
 
 ## 🎯 Quick Overview
 
-**Current Status:** ✅ Working MVP (v1.8 - July 2025)
+**Current Status:** ✅ Working MVP (v1.3 - June 2025)
 
 - 🎥 Real-time computer vision at 30 FPS (OpenCV + HSV classification)
 - 🤖 ESP32 hardware integration with servo control
@@ -32,6 +32,7 @@ This isn't about automating tasks-it's about reclaiming our time and energy by s
 
 | Version | Date         | Description                                     | Link                                                    |
 |---------|--------------|-------------------------------------------------|---------------------------------------------------------|
+| `v1.9`  | October 11, 2025 | Terminal Motion Control with Color-Based Object Tracking | [View v1.9](docs/project_updates/v1.9_update.md) |
 | `v1.8`  | July 25, 2025 | Web Interface Control with Reverse Proxy & Authentication | [View v1.8](docs/project_updates/v1.8_update.md) |
 | `v1.7`  | July 13, 2025 | Hardware Integration with Arduino and Getting Started with SPI | [View v1.7](docs/project_updates/v1.7_update.md) |
 | `v1.6`  | July 1, 2025 | Architecture Refactor & Physical-Virtual Sensor Fusion  | [View v1.6](docs/project_updates/v1.6_update.md) |
