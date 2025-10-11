@@ -272,20 +272,26 @@ run_gazebo_only() {
 # Run manual control mode
 run_manual_control() {
     cleanup_processes "manual control"
-    trap 'cleanup_processes "manual control"; exit 0' SIGINT
-    echo "🎮 Starting Gazebo..."
-    ign gazebo "$WORLD_FILE" &
+    trap 'cleanup_processes "manual control"; exit 0' SIGINT SIGTERM
+    echo "🎮 Starting manual control with full Gazebo integration..."
+    source install/setup.bash
+    ros2 launch cori_description spawn_cori_ignition.launch.py &
     GAZEBO_PID=$!
-    sleep 6
-    echo "🤖 Starting robot state publisher..."
-    ros2 run robot_state_publisher robot_state_publisher --ros-args -p robot_description:="$(xacro "$URDF_FILE")" &
-    RSP_PID=$!
-    sleep 3
-    echo "🚀 Spawning CORI..."
-    ros2 run ros_gz_sim create -name cori -topic robot_description
-    echo "🎉 CORI is ready for manual control!"
-    echo "✋ Click and drag CORI in Gazebo"
-    while true; do sleep 1; [ -z "$(ps -p $GAZEBO_PID -o pid=)" ] && cleanup_processes "manual control"; done
+    sleep 8
+    echo ""
+    echo "🎉 CORI is ready! Starting interactive control..."
+    echo ""
+    sleep 1
+
+    # Start interactive control in this terminal
+    # Use python directly since ros2 run has issues finding the executable
+    python3 install/cori_control/lib/python3.10/site-packages/cori_control/interactive_control.py || true
+
+    # When interactive control exits, clean up
+    echo ""
+    echo "🧹 Cleaning up processes..."
+    cleanup_processes "manual control"
+    echo "✅ Manual control session ended"
 }
 
 # Run webcam color detection
@@ -564,7 +570,7 @@ main() {
         "2) 🎮 Gazebo Simulation"
         "3) 🧺 Laundry Sorting Assistant"
         "4) 📷 Webcam Color Detection"
-        "5) 🦾 Manual Robot Control"
+        "5) 💬 Terminal Motion Control"
         "6) 🔗 ESP32 Hardware Bridge"
         "7) 🌐 Real-time Web Control (Legacy)"
         "8) 🧹 Kill All ROS Processes"

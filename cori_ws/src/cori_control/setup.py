@@ -21,6 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'joint_controller = cori_control.joint_controller:main',
+            'manual_control = cori_control.manual_control:main',
+            'interactive_control = cori_control.interactive_control:main',
         ],
     },
 )

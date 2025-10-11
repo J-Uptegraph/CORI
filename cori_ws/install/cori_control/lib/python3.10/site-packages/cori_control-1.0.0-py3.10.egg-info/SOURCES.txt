@@ -8,5 +8,7 @@ setup.py
 ../../build/cori_control/cori_control.egg-info/top_level.txt
 ../../build/cori_control/cori_control.egg-info/zip-safe
 cori_control/__init__.py
+cori_control/interactive_control.py
 cori_control/joint_controller.py
+cori_control/manual_control.py
 resource/cori_control
