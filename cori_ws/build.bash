@@ -44,9 +44,6 @@ URDF_FILE="src/cori_description/urdf/cori.urdf.xacro"
             "   ╚██████╗██╗╚██████╔╝██╗██║  ██║██╗██║ ██╗"
             "    ╚═════╝╚═╝ ╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝╚═╝ ╚═╝"
         )
-
-        for line in "${banner_lines[@]}"; do
-            local len=${#line}
             local padding_left=$(( (banner_inner_width - len) / 2 ))
             local padding_right=$(( banner_inner_width - len - padding_left ))
             printf "│%*s%s%*s│\n" $padding_left "" "$line" $padding_right ""

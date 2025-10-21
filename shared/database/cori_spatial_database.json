@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "created": "2025-10-14 06:18:34",
+    "description": "CORI Spatial Object Database",
+    "version": "3.0"
+  },
+  "objects": {},
+  "laundry_data": {
+    "total_items_sorted": 2,
+    "hamper_counts": {
+      "Lights": 0,
+      "Darks": 0,
+      "Colors": 2
+    },
+    "learning_database": {
+      "blue": "Colors",
+      "red": "Colors"
+    },
+    "user_corrections": [],
+    "confidence_level": "learning",
+    "custom_colors": {},
+    "sorted_items_history": [
+      {
+        "item_name": "Blue Jeans",
+        "category": "Colors",
+        "timestamp": 1760437124.2587867,
+        "color": "blue"
+      },
+      {
+        "item_name": "Red Shirt",
+        "category": "Colors",
+        "timestamp": 1760439017.519456,
+        "color": "red"
+      }
+    ]
+  }
+}
